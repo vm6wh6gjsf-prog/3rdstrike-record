@@ -60,14 +60,14 @@ function groupedRecords(records){
 }
 function renderHistory(){
  let wins=0,losses=0;state.records.forEach(r=>{wins+=+r.wins||0;losses+=+r.losses||0});
- $("#summary").innerHTML=`<div class="summary-grid"><div class="stat">勝利<strong>${wins}</strong></div><div class="stat">敗北<strong>${losses}</strong></div><div class="stat">対戦数<strong>${wins+losses}</strong></div></div>`;
+ $("#summary").innerHTML=`<div class="summary-grid"><div class="stat">勝利<strong>${wins}</strong></div><div class="stat">敗北<strong>${losses}</strong></div><div class="stat">勝率<strong>${rate(wins,losses)}</strong></div></div>`;
  const groups=groupedRecords(state.records);
  if(!Object.keys(groups).length){$("#history").innerHTML="<p class='muted empty'>まだ記録がありません。</p>";return}
  $("#history").innerHTML=Object.entries(groups).map(([player,rows])=>{
    const pw=rows.reduce((n,r)=>n+(+r.wins||0),0),pl=rows.reduce((n,r)=>n+(+r.losses||0),0);
    return `<div class="player-group">
     <div class="player-title"><span>${esc(player)}</span><span class="rate">勝率 ${rate(pw,pl)}</span></div>
-    <div class="player-stats"><span>勝 ${pw}</span><span>負 ${pl}</span><span>対戦数 ${pw+pl}</span></div>
+    <div class="player-stats"><span>勝 ${pw}</span><span>負 ${pl}</span></div>
     <div class="column-labels"><span>自分のキャラ / 相手キャラ</span><span>勝</span><span>負</span><span>勝率</span><span></span></div>
     ${rows.map(r=>`<div class="record-row">
       <span class="character-name">${esc(r.myCharacter)} / ${esc(r.opponentCharacter)}</span>
@@ -90,14 +90,14 @@ function renderReports(){
    <div class="report-head"><div><h3>${esc(title)}</h3><div class="report-meta">${esc(rep.createdAt)}</div></div>
    <div class="report-actions"><button data-report-edit="${ri}" title="編集">✎</button><button class="report-delete" data-report-delete="${ri}" title="削除">×</button></div></div>
    ${editing?`<div class="edit-form"><label>タイトル<input data-edit-title="${ri}" maxlength="100" value="${esc(title)}"></label><label>メモ<textarea data-edit-note="${ri}" maxlength="1000">${esc(rep.note||"")}</textarea></label><div class="edit-actions"><button class="save-edit" data-edit-save="${ri}">保存</button><button data-edit-cancel="${ri}">キャンセル</button></div></div>`:""}
-   <div class="summary-grid report-summary"><div class="stat">勝利<strong>${totalW}</strong></div><div class="stat">敗北<strong>${totalL}</strong></div><div class="stat">対戦数<strong>${totalW+totalL}</strong></div></div>
+   <div class="summary-grid report-summary"><div class="stat">勝利<strong>${totalW}</strong></div><div class="stat">敗北<strong>${totalL}</strong></div><div class="stat">勝率<strong>${rate(totalW,totalL)}</strong></div></div>
    ${Object.entries(groups).map(([player,rows])=>{
     const pw=rows.reduce((n,r)=>n+(+r.wins||0),0),pl=rows.reduce((n,r)=>n+(+r.losses||0),0);
     return `<div class="report-player"><div class="report-player-head"><span>${esc(player)}</span><span class="rate">勝率 ${rate(pw,pl)}</span></div>
-    <div class="report-player-stats">勝 ${pw}　負 ${pl}　対戦数 ${pw+pl}</div>
-    ${rows.map(r=>`<div class="report-match"><span>${esc(r.myCharacter)} / ${esc(r.opponentCharacter)}</span><span>勝 ${r.wins}　負 ${r.losses}　対戦数 ${(+r.wins||0)+(+r.losses||0)}　勝率 ${rate(r.wins,r.losses)}</span></div>`).join("")}</div>`
+    <div class="report-player-stats">勝 ${pw}　負 ${pl}</div>
+    ${rows.map(r=>`<div class="report-match"><span>${esc(r.myCharacter)} / ${esc(r.opponentCharacter)}</span><span>勝 ${r.wins}　負 ${r.losses}　勝率 ${rate(r.wins,r.losses)}</span></div>`).join("")}</div>`
    }).join("")}
-   ${!editing?`<div class="report-note"><div class="muted">メモ</div><textarea data-note="${ri}" maxlength="1000" placeholder="このレポートのメモ">${esc(rep.note||"")}</textarea><div class="report-note-actions"><button class="save-note" data-note-save="${ri}">メモを保存</button></div></div>`:""}
+   ${!editing?`<div class="report-note-view"><div class="report-note-label">メモ</div><div class="report-note-text">${rep.note?esc(rep.note):"メモはありません。"}</div></div>`:""}
   </div>`;
  }).join("");
 }
@@ -159,7 +159,6 @@ document.addEventListener("click",e=>{
   const note=document.querySelector(`[data-edit-note="${i}"]`).value;
   state.reports[i].title=title;state.reports[i].note=note;state.reports[i].editing=false;save();renderReports();toast("レポートを更新しました");
  }
- if(t.dataset.noteSave!==undefined){const i=+t.dataset.noteSave;state.reports[i].note=document.querySelector(`[data-note="${i}"]`).value;save();toast("メモを保存しました")}
  if(t.dataset.dp!==undefined){
   const i=+t.dataset.dp;
   if(confirm(`「${state.players[i]}」を削除しますか？`)){replacePlayer(state.players[i],"不明");state.players.splice(i,1);save();render();toast("削除しました")}
