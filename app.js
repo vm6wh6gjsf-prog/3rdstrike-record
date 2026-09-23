@@ -137,7 +137,7 @@ $("#battleForm").onsubmit=e=>{
  if(!added)return toast("「WIN」または「LOSE」を1回以上押してください");
  save();renderHistory();
  const selectedChars=selected.map(x=>x.character);
- $("#matchRows").innerHTML="";addRow("");
+ $("#matchRows").innerHTML="";addRow(selectedChars[0]||"");
  toast(`${added}戦を記録しました`);
 };
 
