@@ -1,31 +1,36 @@
-const KEY="fg-record-v3";
+const KEY="fg-record-v4";
 const INITIAL=["アレックス","ダッドリー","エレナ","ヒューゴー","いぶき","ケン","まこと","ネクロ","オロ","Q","リュウ","ショーン","トゥエルヴ","ユリアン","ヤン","ユン","春麗","豪鬼","レミー"];
-const defaults={players:["不明"],records:[]};
-let state=load();
-const $=s=>document.querySelector(s);
+const defaults={players:["不明"],records:[],reports:[]};
+let state=load();const $=s=>document.querySelector(s);
 
 function load(){
  try{
-  let x=JSON.parse(localStorage.getItem(KEY));
+  const x=JSON.parse(localStorage.getItem(KEY));
   if(!x)return structuredClone(defaults);
   let p=Array.isArray(x.players)&&x.players.length?x.players:["不明"];
   if(!p.includes("不明"))p.unshift("不明");
-  return {players:p,records:Array.isArray(x.records)?x.records:[]};
+  return {players:p,records:Array.isArray(x.records)?x.records:[],reports:Array.isArray(x.reports)?x.reports:[]};
  }catch{return structuredClone(defaults)}
 }
 function save(){localStorage.setItem(KEY,JSON.stringify(state))}
 function esc(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
 function toast(s){let e=$("#toast");e.textContent=s;e.classList.add("show");clearTimeout(toast.t);toast.t=setTimeout(()=>e.classList.remove("show"),1800)}
 function opts(a,v){return a.map(x=>`<option value="${esc(x)}" ${x===v?"selected":""}>${esc(x)}</option>`).join("")}
+function rate(w,l){return w+l?Math.round(w/(w+l)*100)+"%":"—"}
 
 function addRow(character){
- let r=document.createElement("div");r.className="match-row";r.dataset.w=0;r.dataset.l=0;
+ const r=document.createElement("div");r.className="match-row";r.dataset.w=0;r.dataset.l=0;
  r.innerHTML=`<label>相手キャラ<select class="opponent-character">${opts(INITIAL,character||INITIAL[0])}</select></label>
  <div class="count-buttons"><button type="button" class="count-button win">勝<span class="count-value">0</span></button><button type="button" class="count-button loss">負<span class="count-value">0</span></button></div>
- <button type="button" class="remove-row">×</button>`;
+ <button type="button" class="remove-row" title="リセット / 削除">×</button>`;
  r.querySelector(".win").onclick=()=>{r.dataset.w++;r.querySelector(".win .count-value").textContent=r.dataset.w};
  r.querySelector(".loss").onclick=()=>{r.dataset.l++;r.querySelector(".loss .count-value").textContent=r.dataset.l};
- r.querySelector(".remove-row").onclick=()=>$("#matchRows").children.length>1?r.remove():toast("最低1件は入力してください");
+ r.querySelector(".remove-row").onclick=()=>{
+   if($("#matchRows").firstElementChild===r){
+     r.dataset.w=0;r.dataset.l=0;
+     r.querySelector(".win .count-value").textContent="0";r.querySelector(".loss .count-value").textContent="0";
+   }else r.remove();
+ };
  $("#matchRows").appendChild(r);
 }
 
@@ -39,64 +44,93 @@ function renderSelects(){
 function normalize(){
  let map=new Map();
  state.records.forEach(r=>{
-  if(r.matches){
-   r.matches.forEach(m=>addAgg(r.myCharacter,r.player,m.character,m.result==="win"?1:0,m.result==="loss"?1:0))
-  }else{
-   addAgg(r.myCharacter,r.player,r.opponentCharacter,r.wins,r.losses)
-  }
+  if(r.matches)r.matches.forEach(m=>addAgg(r.myCharacter,r.player,m.character,m.result==="win"?1:0,m.result==="loss"?1:0));
+  else addAgg(r.myCharacter,r.player,r.opponentCharacter,r.wins,r.losses);
  });
  state.records=[...map.values()];
  function addAgg(a,b,c,w,l){
-  let k=[a,b,c].join("\1"),o=map.get(k)||{myCharacter:a,player:b,opponentCharacter:c,wins:0,losses:0};
+  const k=[a,b,c].join("\\1"),o=map.get(k)||{myCharacter:a,player:b,opponentCharacter:c,wins:0,losses:0};
   o.wins+=+w||0;o.losses+=+l||0;map.set(k,o);
  }
 }
 normalize();
 
+function groupedRecords(records){
+ const groups={};
+ records.forEach((r,i)=>(groups[r.player]??=[]).push({...r,index:i}));
+ return groups;
+}
 function renderHistory(){
- let wins=0,losses=0;
- state.records.forEach(r=>{wins+=+r.wins||0;losses+=+r.losses||0});
- $("#recordCount").textContent=`${state.records.length}組み合わせ`;
- $("#summary").innerHTML=`<div class="summary-grid"><div class="stat">勝利<strong>${wins}</strong></div><div class="stat">敗北<strong>${losses}</strong></div><div class="stat">勝率<strong>${wins+losses?Math.round(wins/(wins+losses)*100):0}%</strong></div></div>`;
+ let wins=0,losses=0;state.records.forEach(r=>{wins+=+r.wins||0;losses+=+r.losses||0});
+ $("#summary").innerHTML=`<div class="summary-grid"><div class="stat">勝利<strong>${wins}</strong></div><div class="stat">敗北<strong>${losses}</strong></div><div class="stat">勝率<strong>${rate(wins,losses)}</strong></div></div>`;
+ const groups=groupedRecords(state.records);
+ if(!Object.keys(groups).length){$("#history").innerHTML="<p class='muted empty'>まだ記録がありません。</p>";return}
+ $("#history").innerHTML=Object.entries(groups).map(([player,rows])=>{
+   const pw=rows.reduce((n,r)=>n+(+r.wins||0),0),pl=rows.reduce((n,r)=>n+(+r.losses||0),0);
+   return `<div class="player-group">
+    <div class="player-title"><span>${esc(player)}</span><span class="rate">勝率 ${rate(pw,pl)}</span></div>
+    <div class="column-labels"><span>自分のキャラ / 相手キャラ</span><span>勝</span><span>負</span><span>勝率</span><span></span></div>
+    ${rows.map(r=>`<div class="record-row">
+      <span class="character-name">${esc(r.myCharacter)} / ${esc(r.opponentCharacter)}</span>
+      <span class="count">${r.wins}</span><span class="count">${r.losses}</span><span class="count">${rate(r.wins,r.losses)}</span>
+      <button type="button" class="delete-record" data-delete="${r.index}" title="削除">×</button>
+    </div>`).join("")}
+   </div>`;
+ }).join("");
+}
 
- let groups={};
- state.records.forEach((r,i)=>(groups[r.player]??=[]).push({...r,index:i}));
- let html=Object.keys(groups).length?Object.entries(groups).map(([player,rows])=>`
- <div class="player-group">
-  <div class="player-title">vs ${esc(player)}</div>
-  ${rows.map(r=>`<div class="record-row">
-   <span class="character-name">${esc(r.myCharacter)}　/　${esc(r.opponentCharacter)}</span>
-   <span class="count">${r.wins}</span><span class="count">${r.losses}</span>
-   <button type="button" class="delete-record" data-delete="${r.index}">削除</button>
-  </div>`).join("")}
- </div>`).join(""):"<p class='muted'>まだ記録がありません。</p>";
- $("#history").innerHTML=html;
+function snapshot(){
+ return JSON.parse(JSON.stringify(state.records));
+}
+function renderReports(){
+ if(!state.reports.length){$("#reports").innerHTML="<p class='muted empty'>まだレポートがありません。</p>";return}
+ $("#reports").innerHTML=state.reports.map((rep,ri)=>{
+  const groups=groupedRecords(rep.records);
+  let totalW=0,totalL=0;rep.records.forEach(r=>{totalW+=+r.wins||0;totalL+=+r.losses||0});
+  return `<div class="report-card">
+   <div class="report-head"><div><h3>レポート ${ri+1}</h3><div class="report-meta">${esc(rep.createdAt)}</div></div><button class="report-delete" data-report-delete="${ri}" title="削除">×</button></div>
+   <div class="summary-grid report-summary"><div class="stat">勝利<strong>${totalW}</strong></div><div class="stat">敗北<strong>${totalL}</strong></div><div class="stat">勝率<strong>${rate(totalW,totalL)}</strong></div></div>
+   ${Object.entries(groups).map(([player,rows])=>{
+    const pw=rows.reduce((n,r)=>n+(+r.wins||0),0),pl=rows.reduce((n,r)=>n+(+r.losses||0),0);
+    return `<div class="report-player"><div class="report-player-head"><span>${esc(player)}</span><span class="rate">勝率 ${rate(pw,pl)}</span></div>
+    ${rows.map(r=>`<div class="report-match"><span>${esc(r.myCharacter)} / ${esc(r.opponentCharacter)}</span><span>${r.wins}勝 ${r.losses}敗　${rate(r.wins,r.losses)}</span></div>`).join("")}</div>`
+   }).join("")}
+   <div class="report-note"><label>メモ<textarea data-note="${ri}" maxlength="1000" placeholder="このレポートのメモ">${esc(rep.note||"")}</textarea></label><div class="report-note-actions"><button type="button" class="save-note" data-note-save="${ri}">メモを保存</button></div></div>
+  </div>`;
+ }).join("");
 }
 
 function renderPlayers(){
- $("#playerList").innerHTML=state.players.map((n,i)=>`<div class="setting-item"><span>${esc(n)}</span><div class="setting-actions">${i?`<button data-ep="${i}">編集</button><button class="delete" data-dp="${i}">削除</button>`:""}</div></div>`).join("");
+ $("#playerList").innerHTML=state.players.map((n,i)=>`<div class="setting-item"><span>${esc(n)}</span><div class="setting-actions">${i?`<button data-ep="${i}">編集</button><button class="delete" data-dp="${i}">×</button>`:""}</div></div>`).join("");
 }
-function render(){renderSelects();renderPlayers();renderHistory()}
+function render(){renderSelects();renderPlayers();renderHistory();renderReports()}
 
-$("#addMatchRow").onclick=()=>addRow();
+$("#addMatchRow").onclick=()=>{
+ const rows=[...document.querySelectorAll(".opponent-character")];
+ addRow(rows.length?rows[rows.length-1].value:INITIAL[0]);
+};
+
 $("#battleForm").onsubmit=e=>{
- e.preventDefault();
- let added=0;
- document.querySelectorAll(".match-row").forEach(r=>{
-  let w=+r.dataset.w,l=+r.dataset.l;if(!w&&!l)return;
-  let a=$("#myCharacter").value,b=$("#opponentPlayer").value,c=r.querySelector("select").value;
-  let o=state.records.find(x=>x.myCharacter===a&&x.player===b&&x.opponentCharacter===c);
-  if(o){o.wins+=w;o.losses+=l}else state.records.push({myCharacter:a,player:b,opponentCharacter:c,wins:w,losses:l});
-  added+=w+l;
+ e.preventDefault();let added=0;
+ const selected=[...document.querySelectorAll(".match-row")].map(r=>({character:r.querySelector("select").value,w:+r.dataset.w,l:+r.dataset.l}));
+ selected.forEach(x=>{
+  if(!x.w&&!x.l)return;
+  const a=$("#myCharacter").value,b=$("#opponentPlayer").value,c=x.character;
+  const o=state.records.find(r=>r.myCharacter===a&&r.player===b&&r.opponentCharacter===c);
+  if(o){o.wins+=x.w;o.losses+=x.l}else state.records.push({myCharacter:a,player:b,opponentCharacter:c,wins:x.w,losses:x.l});
+  added+=x.w+x.l;
  });
  if(!added)return toast("「勝」または「負」を1回以上押してください");
  save();renderHistory();
- // 入力欄は初期化するが、最後に選択した相手キャラを次の行へ引き継ぐ
- let selected=[...document.querySelectorAll(".match-row")].map(r=>r.querySelector("select").value);
- $("#matchRows").innerHTML="";
- addRow(selected[0]||INITIAL[0]);
- selected.slice(1).forEach(c=>addRow(c));
+ const selectedChars=selected.map(x=>x.character);
+ $("#matchRows").innerHTML="";addRow(selectedChars[0]||INITIAL[0]);selectedChars.slice(1).forEach(c=>addRow(c));
  toast(`${added}戦を記録しました`);
+};
+
+$("#saveReport").onclick=()=>{
+ if(!state.records.length)return toast("記録する戦績がありません");
+ state.reports.push({createdAt:new Date().toLocaleString("ja-JP"),records:snapshot(),note:""});
+ save();renderReports();toast("レポートを記録しました");
 };
 
 $("#playerForm").onsubmit=e=>{
@@ -108,19 +142,27 @@ $("#playerForm").onsubmit=e=>{
 function replacePlayer(a,b){state.records.forEach(r=>{if(r.player===a)r.player=b})}
 
 document.addEventListener("click",e=>{
- let t=e.target;
+ const t=e.target;
  if(t.dataset.delete!==undefined){
-  let i=+t.dataset.delete;
+  const i=+t.dataset.delete;
   if(confirm(`「${state.records[i].myCharacter} / ${state.records[i].player} / ${state.records[i].opponentCharacter}」を削除しますか？`)){
    state.records.splice(i,1);save();renderHistory();toast("組み合わせを削除しました");
   }
  }
+ if(t.dataset.reportDelete!==undefined){
+  const i=+t.dataset.reportDelete;
+  if(confirm(`レポート ${i+1} を削除しますか？`)){state.reports.splice(i,1);save();renderReports();toast("レポートを削除しました")}
+ }
+ if(t.dataset.noteSave!==undefined){
+  const i=+t.dataset.noteSave;const ta=document.querySelector(`[data-note="${i}"]`);
+  state.reports[i].note=ta.value;save();toast("メモを保存しました");
+ }
  if(t.dataset.ep){
-  let i=+t.dataset.ep,n=prompt("新しいプレイヤー名",state.players[i])?.trim();
+  const i=+t.dataset.ep,n=prompt("新しいプレイヤー名",state.players[i])?.trim();
   if(n&&!state.players.includes(n)){replacePlayer(state.players[i],n);state.players[i]=n;save();render();toast("変更しました")}
  }
  if(t.dataset.dp){
-  let i=+t.dataset.dp;
+  const i=+t.dataset.dp;
   if(confirm(`「${state.players[i]}」を削除しますか？`)){replacePlayer(state.players[i],"不明");state.players.splice(i,1);save();render();toast("削除しました")}
  }
 });

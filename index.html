@@ -16,7 +16,7 @@
 <main>
 <header class="topbar"><h1>3rdストライク戦績</h1></header>
 
-<section id="battleTab" class="tab-panel">
+<section id="inputTab" class="tab-panel">
 <form id="battleForm">
 <div class="card">
 <h2>対戦を記録</h2>
@@ -26,22 +26,30 @@
 
 <div class="card">
 <div class="section-heading"><h2>相手キャラ・勝敗</h2><button id="addMatchRow" type="button" class="small-button">＋追加</button></div>
-<p class="muted">「勝」「負」を押した回数が、そのまま記録されます。</p>
+<p class="muted">「勝」「負」を押した回数が、そのまま記録されます。1件目の「×」は勝敗数をリセットします。</p>
 <div id="matchRows"></div>
 </div>
 <button class="primary-button" type="submit">この内容を記録する</button>
 </form>
 
 <section class="card">
-<div class="section-heading"><h2>集計戦績</h2><span id="recordCount" class="muted"></span></div>
+<div class="section-heading"><h2>集計戦績</h2><button id="saveReport" type="button" class="secondary-button">レポートに記録する</button></div>
 <div id="summary"></div>
 <div id="history"></div>
 </section>
 
 <section class="card danger-card">
 <h2>戦績データ削除</h2>
-<p class="muted">登録した戦績だけをすべて削除します。プレイヤー設定は残ります。</p>
+<p class="muted">登録した戦績だけをすべて削除します。プレイヤー設定と戦績レポートは残ります。</p>
 <button id="deleteRecords" class="danger-button" type="button">戦績をすべて削除</button>
+</section>
+</section>
+
+<section id="reportTab" class="tab-panel hidden">
+<section class="card">
+<h2>戦績レポート</h2>
+<p class="muted">「レポートに記録する」を押した時点の集計戦績を保存します。後から戦績を変更しても、保存済みレポートは変わりません。</p>
+<div id="reports"></div>
 </section>
 </section>
 
@@ -64,7 +72,8 @@
 </main>
 
 <nav class="bottom-nav">
-<button class="nav-item active" data-tab="battleTab" type="button">⚔️<span>戦績</span></button>
+<button class="nav-item active" data-tab="inputTab" type="button">⚔️<span>戦績入力</span></button>
+<button class="nav-item" data-tab="reportTab" type="button">📊<span>戦績レポート</span></button>
 <button class="nav-item" data-tab="playersTab" type="button">👤<span>プレイヤー設定</span></button>
 </nav>
 
