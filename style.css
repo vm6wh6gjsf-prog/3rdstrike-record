@@ -449,3 +449,31 @@ button {
   padding-left:24px;
 }
 .character-settings-list{display:flex;flex-direction:column;gap:8px}.character-sort-item{display:flex;align-items:center;justify-content:space-between;min-height:48px;padding:7px 8px 7px 12px;background:#fff;border:1px solid #e5e7eb;border-radius:10px}.character-sort-name{font-weight:700}.sort-controls{display:flex;gap:6px}.sort-button{width:38px;height:34px;padding:0;background:#fff;color:#2563eb;border:1px solid #2563eb;border-radius:8px;font-size:18px;font-weight:700}.sort-button:disabled{opacity:.25}
+
+
+/* v26: keep all four bottom tabs on one row. */
+.bottom-nav{
+  display:grid !important;
+  grid-template-columns:repeat(4,minmax(0,1fr)) !important;
+  flex-wrap:nowrap !important;
+}
+.bottom-nav .nav-item{
+  min-width:0 !important;
+  width:100% !important;
+  padding-left:2px !important;
+  padding-right:2px !important;
+  white-space:nowrap !important;
+  font-size:11px !important;
+}
+.bottom-nav .nav-item span{
+  white-space:nowrap !important;
+}
+
+/* v26: remove unnecessary space above character settings. */
+#charactersTab{
+  margin-top:0 !important;
+  padding-top:0 !important;
+}
+#charactersTab > .card{
+  margin-top:0 !important;
+}
