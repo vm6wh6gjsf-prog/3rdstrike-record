@@ -352,3 +352,99 @@ button {
 .result-controls .clear-row{
   font-size:20px !important;
 }
+
+
+/* v24: header help button */
+.topbar{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+}
+.topbar-actions{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.help-button{
+  appearance:none;
+  background:#fff;
+  color:#2563eb;
+  border:1px solid #2563eb;
+  border-radius:10px;
+  padding:7px 11px;
+  font-weight:700;
+  white-space:nowrap;
+}
+
+/* v24: player add form/card */
+.player-add-form{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+.player-add-form input{
+  width:100%;
+  box-sizing:border-box;
+}
+.player-add-button{
+  width:100% !important;
+  display:block !important;
+}
+
+/* v24: help modal */
+.modal-open{overflow:hidden;}
+.help-modal{
+  position:fixed;
+  inset:0;
+  z-index:1000;
+  background:rgba(17,24,39,.45);
+  display:flex;
+  align-items:stretch;
+  justify-content:center;
+  padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom);
+}
+.help-modal.hidden{display:none !important;}
+.help-panel{
+  width:min(100%,560px);
+  height:100%;
+  background:#f3f4f6;
+  overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
+}
+.help-header{
+  position:sticky;
+  top:0;
+  z-index:2;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:16px;
+  background:#fff;
+  border-bottom:1px solid #e5e7eb;
+}
+.help-header h2{margin:0;}
+.help-close{
+  appearance:none;
+  width:40px;
+  height:40px;
+  padding:0;
+  border:0;
+  background:transparent;
+  color:#374151;
+  font-size:30px;
+  line-height:1;
+}
+.help-content{
+  padding:16px 16px 32px;
+}
+.help-content h3{
+  margin:24px 0 10px;
+}
+.help-content h3:first-child{margin-top:0;}
+.help-content p,.help-content li{
+  line-height:1.65;
+}
+.help-content ol{
+  padding-left:24px;
+}

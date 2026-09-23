@@ -191,3 +191,10 @@ document.querySelectorAll(".nav-item").forEach(b=>b.onclick=()=>{
 });
 
 $("#matchRows").innerHTML="";addRow();render();
+
+
+// v24: usage/help modal
+const helpModal=$("#helpModal");
+$("#openHelp").onclick=()=>{helpModal.classList.remove("hidden");document.body.classList.add("modal-open");};
+$("#closeHelp").onclick=()=>{helpModal.classList.add("hidden");document.body.classList.remove("modal-open");};
+helpModal.addEventListener("click",e=>{if(e.target===helpModal){helpModal.classList.add("hidden");document.body.classList.remove("modal-open");}});

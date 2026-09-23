@@ -4,19 +4,19 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#111827">
-<meta name="app-version" content="v23">
+<meta name="app-version" content="v24">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="3rd対戦記録">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" type="image/png" sizes="180x180" href="icon-180.png">
-<link rel="stylesheet" href="style.css?v=23">
+<link rel="stylesheet" href="style.css?v=24">
 <title>3rd対戦記録</title>
 </head>
 <body>
 <main>
-<header class="topbar"><h1>3rd対戦記録</h1><span class="version-badge">v23</span></header>
+<header class="topbar"><h1>3rd対戦記録</h1><div class="topbar-actions"><button id="openHelp" class="help-button" type="button">使い方</button><span class="version-badge">v24</span></div></header>
 
 <section id="inputTab" class="tab-panel">
 <form id="battleForm">
@@ -54,12 +54,15 @@
 
 <section id="playersTab" class="tab-panel hidden">
 <section class="card">
-<h2>プレイヤー設定</h2>
-<p class="muted">初期状態では「不明」のみ登録されています。</p>
-<form id="playerForm" class="inline-form">
+<h2>プレイヤーを追加する</h2>
+<form id="playerForm" class="player-add-form">
 <input id="playerName" maxlength="30" placeholder="プレイヤー名" required>
-<button class="primary-button" type="submit">追加</button>
+<button class="primary-button player-add-button" type="submit">追加</button>
 </form>
+</section>
+<section class="card">
+<h2>登録プレイヤー</h2>
+<p class="muted">初期状態では「不明」のみ登録されています。</p>
 <div id="playerList" class="settings-list"></div>
 </section>
 <section class="card danger-card">
@@ -75,8 +78,44 @@
 <button class="nav-item" data-tab="reportTab" type="button">📊<span>戦績レポート</span></button>
 <button class="nav-item" data-tab="playersTab" type="button">👤<span>プレイヤー設定</span></button>
 </nav>
+
+<div id="helpModal" class="help-modal hidden" role="dialog" aria-modal="true" aria-labelledby="helpTitle">
+  <div class="help-panel">
+    <div class="help-header">
+      <h2 id="helpTitle">使い方</h2>
+      <button id="closeHelp" class="help-close" type="button" aria-label="使い方を閉じる">×</button>
+    </div>
+    <div class="help-content">
+      <p>『ストリートファイターIII 3rd STRIKE』の対戦結果を、iPhoneなどのブラウザから手軽に記録・集計するためのアプリです。</p>
+<h3>戦績入力</h3>
+<ol><li>「自分のキャラ」を「選択してください」から選択します。</li><li>「相手プレイヤー」を選択します。</li><li>「相手キャラ」を「選択してください」から選択し、対戦結果に応じて「WIN」または「LOSE」を押します。</li><li>入力が終わったら「戦績に記録する」を押します。</li></ol>
+<p>ゴミ箱ボタンを押すと、入力中のWIN・LOSEを0に戻します。</p>
+<h3>戦績</h3>
+<p>記録した対戦結果を、相手プレイヤーとキャラクターの組み合わせごとに確認できます。</p>
+<p>各組み合わせについて「WIN」「LOSE」「勝率」が自動で集計されます。</p>
+<p>不要な組み合わせは「×」から削除できます。</p>
+<p>「戦績レポートに記録する」を押すと、その時点の戦績を戦績レポートとして保存します。</p>
+<h3>戦績レポート</h3>
+<p>保存した時点の戦績を後から確認できます。</p>
+<p>レポートには作成日時が記録され、プレイヤー別・キャラクター別の「WIN」「LOSE」「勝率」を確認できます。プレイヤーごとの最終行には合計戦績が表示されます。</p>
+<p>鉛筆ボタンを押すと、レポートのタイトルとメモを編集できます。</p>
+<p>「×」を押すとレポートを削除できます。</p>
+<p>レポートは保存した時点のスナップショットです。その後に通常の戦績を追加・削除しても、保存済みレポートの内容は変わりません。</p>
+<h3>プレイヤー設定</h3>
+<p>対戦相手の名前を追加・削除できます。</p>
+<p>初期状態では「不明」が登録されています。</p>
+<p>プレイヤーを削除すると、現在の戦績にあるそのプレイヤー名は「不明」に置き換わります。保存済みの戦績レポートには影響しません。</p>
+<h3>データの保存</h3>
+<p>戦績、プレイヤー設定、戦績レポートはブラウザ内に保存されます。サーバーやクラウドへの同期は行いません。</p>
+<p>ブラウザのWebサイトデータを削除すると、記録したデータも消える可能性があります。</p>
+<h3>iPhoneのホーム画面に追加</h3>
+<ol><li>Safariでアプリを開きます。</li><li>Safariの共有ボタンを押します。</li><li>「ホーム画面に追加」を選択します。</li><li>ホーム画面に追加された「3rd対戦記録」から起動できます。</li></ol>
+    </div>
+  </div>
+</div>
+
 <div id="toast" class="toast"></div>
-<script src="app.js?v=23"></script>
+<script src="app.js?v=24"></script>
 <script>if("serviceWorker" in navigator){navigator.serviceWorker.register("./sw.js").catch(()=>{});}</script>
 </body>
 </html>
