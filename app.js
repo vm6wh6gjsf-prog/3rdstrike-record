@@ -68,9 +68,9 @@ function renderHistory(){
    return `<div class="player-group">
     <div class="player-title"><span>${esc(player)}</span><span class="rate">勝率 ${rate(pw,pl)}</span></div>
     <div class="player-stats"><span>勝 ${pw}</span><span>負 ${pl}</span></div>
-    <div class="column-labels"><span>自分のキャラ / 相手キャラ</span><span>勝</span><span>負</span><span>勝率</span><span></span></div>
+    <div class="column-labels"><span>自分のキャラ vs 相手キャラ</span><span>勝</span><span>負</span><span>勝率</span><span></span></div>
     ${rows.map(r=>`<div class="record-row">
-      <span class="character-name">${esc(r.myCharacter)} / ${esc(r.opponentCharacter)}</span>
+      <span class="character-name">${esc(r.myCharacter)} vs ${esc(r.opponentCharacter)}</span>
       <span class="count">${r.wins}</span><span class="count">${r.losses}</span><span class="count">${rate(r.wins,r.losses)}</span>
       <button type="button" class="delete-record" data-delete="${r.index}" title="削除">×</button>
     </div>`).join("")}
@@ -96,9 +96,9 @@ function renderReports(){
     return `<div class="player-group">
       <div class="player-title"><span>${esc(player)}</span></div>
       <div class="player-stats"><span>勝 ${pw}</span><span>負 ${pl}</span></div>
-      <div class="column-labels"><span>自分のキャラ / 相手キャラ</span><span>勝</span><span>負</span><span>勝率</span><span></span></div>
+      <div class="column-labels"><span>自分のキャラ vs 相手キャラ</span><span>勝</span><span>負</span><span>勝率</span><span></span></div>
       ${rows.map(r=>`<div class="record-row">
-       <span class="character-name">${esc(r.myCharacter)} / ${esc(r.opponentCharacter)}</span>
+       <span class="character-name">${esc(r.myCharacter)} vs ${esc(r.opponentCharacter)}</span>
        <span class="count">${r.wins}</span><span class="count">${r.losses}</span><span class="count">${rate(r.wins,r.losses)}</span><span></span>
       </div>`).join("")}
       <div class="record-row player-total-row">
