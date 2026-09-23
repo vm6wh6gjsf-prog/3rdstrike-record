@@ -120,9 +120,6 @@ function renderPlayers(){
 }
 function render(){renderSelects();renderPlayers();renderHistory();renderReports()}
 
-$("#addMatchRow").onclick=()=>{
- const rows=[...document.querySelectorAll(".opponent-character")];addRow(rows.length?rows[rows.length-1].value:INITIAL[0]);
-};
 
 $("#battleForm").onsubmit=e=>{
  e.preventDefault();let added=0;
