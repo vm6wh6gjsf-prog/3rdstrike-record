@@ -22,14 +22,16 @@ function battles(w,l){return (w+l)+"戦"}
 function addRow(character){
  const r=document.createElement("div");r.className="match-row";r.dataset.w=0;r.dataset.l=0;
  r.innerHTML=`<label>相手キャラ<select class="opponent-character">${opts(INITIAL,character||INITIAL[0])}</select></label>
- <div class="count-buttons"><button type="button" class="count-button win">勝<span class="count-value">0</span></button><button type="button" class="count-button loss">負<span class="count-value">0</span></button></div>
- <button type="button" class="remove-row" title="リセット / 削除">×</button>`;
+ <div class="result-controls">
+   <div class="count-buttons"><button type="button" class="count-button win">勝<span class="count-value">0</span></button><button type="button" class="count-button loss">負<span class="count-value">0</span></button></div>
+   <button type="button" class="clear-row">クリア</button>
+ </div>`;
  r.querySelector(".win").onclick=()=>{r.dataset.w++;r.querySelector(".win .count-value").textContent=r.dataset.w};
  r.querySelector(".loss").onclick=()=>{r.dataset.l++;r.querySelector(".loss .count-value").textContent=r.dataset.l};
- r.querySelector(".remove-row").onclick=()=>{
-   if($("#matchRows").firstElementChild===r){
-     r.dataset.w=0;r.dataset.l=0;r.querySelector(".win .count-value").textContent="0";r.querySelector(".loss .count-value").textContent="0";
-   }else r.remove();
+ r.querySelector(".clear-row").onclick=()=>{
+   r.dataset.w=0;r.dataset.l=0;
+   r.querySelector(".win .count-value").textContent="0";
+   r.querySelector(".loss .count-value").textContent="0";
  };
  $("#matchRows").appendChild(r);
 }

@@ -242,3 +242,41 @@ button[data-action="loss"] {
 button {
   touch-action: manipulation;
 }
+
+
+/* v18: one opponent-character entry; result controls below it. */
+.match-row{
+  display:block !important;
+}
+.match-row > label{
+  display:block !important;
+  width:100% !important;
+}
+.match-row .opponent-character{
+  width:100% !important;
+}
+.result-controls{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  margin-top:10px;
+}
+.result-controls .count-buttons{
+  display:flex;
+  gap:8px;
+  flex:1;
+}
+.result-controls .count-button{
+  flex:1;
+}
+.clear-row{
+  appearance:none;
+  background:#fff;
+  color:#ef4444;
+  border:1px solid #ef4444;
+  border-radius:10px;
+  min-height:38px;
+  padding:8px 12px;
+  font-weight:700;
+  touch-action:manipulation;
+}
