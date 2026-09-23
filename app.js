@@ -101,6 +101,10 @@ function renderReports(){
        <span class="character-name">${esc(r.myCharacter)} / ${esc(r.opponentCharacter)}</span>
        <span class="count">${r.wins}</span><span class="count">${r.losses}</span><span class="count">${rate(r.wins,r.losses)}</span><span></span>
       </div>`).join("")}
+      <div class="record-row player-total-row">
+       <span class="character-name">合計</span>
+       <span class="count">${pw}</span><span class="count">${pl}</span><span class="count">${rate(pw,pl)}</span><span></span>
+      </div>
     </div>`
    }).join("")}
    ${!editing?`<div class="report-note-view"><div class="report-note-label">メモ</div><div class="report-note-text">${rep.note?esc(rep.note):"メモはありません。"}</div></div>`:""}

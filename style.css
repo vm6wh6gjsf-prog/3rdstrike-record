@@ -50,3 +50,21 @@ button{font:inherit;cursor:pointer}.primary-button{width:100%;min-height:48px;bo
 .report-note-text{font-size:14px;line-height:1.55;white-space:pre-wrap;overflow-wrap:anywhere}
 
 .topbar{display:flex;align-items:center;justify-content:space-between;gap:10px}.version-badge{font-size:11px;color:#6b7280;background:#eef2ff;border-radius:999px;padding:4px 7px}
+
+/* v9: keep the report matchup header on one line and make room for it. */
+.report-card .column-labels,
+.report-card .record-row{
+  grid-template-columns:minmax(132px,1fr) 34px 34px 50px 0;
+  gap:4px;
+}
+.report-card .column-labels span:first-child{
+  white-space:nowrap;
+  font-size:10px;
+  letter-spacing:-0.03em;
+}
+.report-card .player-total-row{
+  margin-top:5px;
+  padding-top:8px;
+  border-top:1px solid #d1d5db;
+  font-weight:700;
+}
