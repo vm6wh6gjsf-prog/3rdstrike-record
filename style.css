@@ -477,3 +477,54 @@ button {
 #charactersTab > .card{
   margin-top:0 !important;
 }
+
+
+/* v27: character tab now lives inside main, matching every other tab's side spacing. */
+#charactersTab{
+  margin:0 !important;
+  padding:0 !important;
+}
+#charactersTab > .card{
+  margin-top:0 !important;
+}
+
+/* v27: free drag sorting with a three-line handle. */
+.character-settings-list{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+.character-sort-item{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  min-height:48px;
+  padding:7px 8px 7px 12px;
+  background:#fff;
+  border:1px solid #e5e7eb;
+  border-radius:10px;
+}
+.character-sort-item.dragging{
+  opacity:.65;
+  box-shadow:0 4px 14px rgba(0,0,0,.15);
+}
+.character-sort-name{font-weight:700;}
+.drag-handle{
+  appearance:none;
+  width:44px;
+  height:38px;
+  padding:0;
+  background:transparent;
+  color:#6b7280;
+  border:0;
+  border-radius:8px;
+  font-size:24px;
+  line-height:1;
+  font-weight:700;
+  cursor:grab;
+  touch-action:none;
+  user-select:none;
+  -webkit-user-select:none;
+}
+.drag-handle:active{cursor:grabbing;}

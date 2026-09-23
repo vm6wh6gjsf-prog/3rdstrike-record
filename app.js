@@ -122,11 +122,40 @@ function renderPlayers(){
 }
 function renderCharacters(){
  const box=$("#characterList");if(!box)return;
- box.innerHTML=state.characterOrder.map((c,i)=>`<div class="character-sort-item"><span class="character-sort-name">${esc(c)}</span><div class="sort-controls"><button type="button" class="sort-button" data-up="${i}" ${i===0?"disabled":""}>↑</button><button type="button" class="sort-button" data-down="${i}" ${i===state.characterOrder.length-1?"disabled":""}>↓</button></div></div>`).join("");
- box.querySelectorAll("[data-up]").forEach(b=>b.onclick=()=>moveCharacter(+b.dataset.up,-1));
- box.querySelectorAll("[data-down]").forEach(b=>b.onclick=()=>moveCharacter(+b.dataset.down,1));
+ box.innerHTML=state.characterOrder.map((c,i)=>`<div class="character-sort-item" data-char-index="${i}">
+   <span class="character-sort-name">${esc(c)}</span>
+   <button type="button" class="drag-handle" aria-label="${esc(c)}を並び替え">☰</button>
+ </div>`).join("");
+ box.querySelectorAll(".drag-handle").forEach(handle=>{
+   handle.addEventListener("pointerdown",startCharacterDrag);
+ });
 }
-function moveCharacter(i,d){const j=i+d;if(j<0||j>=state.characterOrder.length)return;[state.characterOrder[i],state.characterOrder[j]]=[state.characterOrder[j],state.characterOrder[i]];save();renderCharacters();renderSelects()}
+function startCharacterDrag(e){
+ e.preventDefault();
+ const item=e.currentTarget.closest(".character-sort-item");
+ const box=$("#characterList");
+ const pointerId=e.pointerId;
+ item.classList.add("dragging");
+ e.currentTarget.setPointerCapture(pointerId);
+ const move=ev=>{
+   const target=document.elementFromPoint(ev.clientX,ev.clientY)?.closest(".character-sort-item");
+   if(!target||target===item||target.parentElement!==box)return;
+   const rect=target.getBoundingClientRect();
+   if(ev.clientY<rect.top+rect.height/2)box.insertBefore(item,target);
+   else box.insertBefore(item,target.nextSibling);
+ };
+ const endDrag=()=>{
+   e.currentTarget.removeEventListener("pointermove",move);
+   e.currentTarget.removeEventListener("pointerup",endDrag);
+   e.currentTarget.removeEventListener("pointercancel",endDrag);
+   item.classList.remove("dragging");
+   state.characterOrder=[...box.querySelectorAll(".character-sort-item")].map(x=>state.characterOrder[+x.dataset.charIndex]);
+   save();renderCharacters();renderSelects();
+ };
+ e.currentTarget.addEventListener("pointermove",move);
+ e.currentTarget.addEventListener("pointerup",endDrag);
+ e.currentTarget.addEventListener("pointercancel",endDrag);
+}
 
 function render(){renderSelects();renderPlayers();renderHistory();renderReports();renderCharacters()}
 
