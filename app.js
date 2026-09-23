@@ -1,7 +1,12 @@
 const KEY="fg-record-v5";
-const INITIAL=["アレックス","ダッドリー","エレナ","ヒューゴー","いぶき","ケン","まこと","ネクロ","オロ","Q","リュウ","ショーン","トゥエルヴ","ユリアン","ヤン","ユン","春麗","豪鬼","レミー"];
+const INITIAL=["春麗","ユン","ケン","まこと","ダッドリー","ユリアン","エレナ","豪鬼","リュウ","オロ","ヤン","ネクロ","いぶき","アレックス","ヒューゴ","Q","レミー","トゥエルヴ","ショーン"];
 const defaults={players:["不明"],records:[],reports:[],characterOrder:[...INITIAL]};
 let state=load();const $=s=>document.querySelector(s);
+if(localStorage.getItem("fg-character-order-v28")!=="1"){
+ state.characterOrder=[...INITIAL];
+ localStorage.setItem("fg-character-order-v28","1");
+ save();
+}
 
 function load(){
  try{
@@ -122,39 +127,36 @@ function renderPlayers(){
 }
 function renderCharacters(){
  const box=$("#characterList");if(!box)return;
- box.innerHTML=state.characterOrder.map((c,i)=>`<div class="character-sort-item" data-char-index="${i}">
+ box.innerHTML=state.characterOrder.map((c,i)=>`<div class="character-sort-item" data-character="${esc(c)}">
    <span class="character-sort-name">${esc(c)}</span>
-   <button type="button" class="drag-handle" aria-label="${esc(c)}を並び替え">☰</button>
+   <button type="button" class="drag-handle" aria-label="${esc(c)}を並び替え"><span></span><span></span><span></span></button>
  </div>`).join("");
- box.querySelectorAll(".drag-handle").forEach(handle=>{
-   handle.addEventListener("pointerdown",startCharacterDrag);
- });
+ box.querySelectorAll(".drag-handle").forEach(h=>h.addEventListener("pointerdown",startCharacterDrag));
 }
 function startCharacterDrag(e){
  e.preventDefault();
- const item=e.currentTarget.closest(".character-sort-item");
- const box=$("#characterList");
- const pointerId=e.pointerId;
+ const handle=e.currentTarget,item=handle.closest(".character-sort-item"),box=$("#characterList");
  item.classList.add("dragging");
- e.currentTarget.setPointerCapture(pointerId);
+ const pid=e.pointerId;
+ try{handle.setPointerCapture(pid)}catch(_){}
  const move=ev=>{
-   const target=document.elementFromPoint(ev.clientX,ev.clientY)?.closest(".character-sort-item");
-   if(!target||target===item||target.parentElement!==box)return;
-   const rect=target.getBoundingClientRect();
-   if(ev.clientY<rect.top+rect.height/2)box.insertBefore(item,target);
-   else box.insertBefore(item,target.nextSibling);
+   ev.preventDefault();
+   const y=ev.clientY;
+   const others=[...box.querySelectorAll(".character-sort-item:not(.dragging)")];
+   const before=others.find(el=>{const r=el.getBoundingClientRect();return y<r.top+r.height/2});
+   if(before)box.insertBefore(item,before);else box.appendChild(item);
  };
- const endDrag=()=>{
-   e.currentTarget.removeEventListener("pointermove",move);
-   e.currentTarget.removeEventListener("pointerup",endDrag);
-   e.currentTarget.removeEventListener("pointercancel",endDrag);
+ const finish=()=>{
+   document.removeEventListener("pointermove",move);
+   document.removeEventListener("pointerup",finish);
+   document.removeEventListener("pointercancel",finish);
    item.classList.remove("dragging");
-   state.characterOrder=[...box.querySelectorAll(".character-sort-item")].map(x=>state.characterOrder[+x.dataset.charIndex]);
+   state.characterOrder=[...box.querySelectorAll(".character-sort-item")].map(el=>el.dataset.character);
    save();renderCharacters();renderSelects();
  };
- e.currentTarget.addEventListener("pointermove",move);
- e.currentTarget.addEventListener("pointerup",endDrag);
- e.currentTarget.addEventListener("pointercancel",endDrag);
+ document.addEventListener("pointermove",move,{passive:false});
+ document.addEventListener("pointerup",finish,{once:true});
+ document.addEventListener("pointercancel",finish,{once:true});
 }
 
 function render(){renderSelects();renderPlayers();renderHistory();renderReports();renderCharacters()}

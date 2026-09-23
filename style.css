@@ -528,3 +528,17 @@ button {
   -webkit-user-select:none;
 }
 .drag-handle:active{cursor:grabbing;}
+
+/* v28: reliable touch drag handle */
+.drag-handle{
+  width:44px !important;height:40px !important;padding:9px 8px !important;
+  display:flex !important;flex-direction:column !important;justify-content:space-between !important;
+  background:transparent !important;border:0 !important;touch-action:none !important;
+  -webkit-user-select:none !important;user-select:none !important;
+}
+.drag-handle span{
+  display:block;width:100%;height:2px;background:#6b7280;border-radius:2px;
+}
+.character-sort-item.dragging{
+  position:relative;z-index:5;opacity:.72;
+}
