@@ -280,3 +280,45 @@ button {
   font-weight:700;
   touch-action:manipulation;
 }
+
+
+/* v19: single-row result controls and requested WIN/LOSE/Clear styling. */
+#matchRows{
+  margin-top:0 !important;
+  padding-top:0 !important;
+  border-top:0 !important;
+}
+.match-row{
+  margin-top:0 !important;
+  padding-top:0 !important;
+  border-top:0 !important;
+}
+.result-controls{
+  display:grid !important;
+  grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+  gap:8px !important;
+  width:100% !important;
+}
+.result-controls .count-buttons{
+  display:contents !important;
+}
+.result-controls .count-button,
+.result-controls .clear-row{
+  width:100% !important;
+  min-width:0 !important;
+  box-sizing:border-box !important;
+}
+
+/* WIN */
+.result-controls .win{
+  background:#fff !important;
+  color:#16a34a !important;
+  border:1px solid #16a34a !important;
+}
+
+/* LOSE */
+.result-controls .loss{
+  background:#fff !important;
+  color:#ef4444 !important;
+  border:1px solid #ef4444 !important;
+}

@@ -23,7 +23,7 @@ function addRow(character){
  const r=document.createElement("div");r.className="match-row";r.dataset.w=0;r.dataset.l=0;
  r.innerHTML=`<label>相手キャラ<select class="opponent-character">${opts(INITIAL,character||INITIAL[0])}</select></label>
  <div class="result-controls">
-   <div class="count-buttons"><button type="button" class="count-button win">勝<span class="count-value">0</span></button><button type="button" class="count-button loss">負<span class="count-value">0</span></button></div>
+   <div class="count-buttons"><button type="button" class="count-button win">WIN<span class="count-value">0</span></button><button type="button" class="count-button loss">LOSE<span class="count-value">0</span></button></div>
    <button type="button" class="clear-row">クリア</button>
  </div>`;
  r.querySelector(".win").onclick=()=>{r.dataset.w++;r.querySelector(".win .count-value").textContent=r.dataset.w};
@@ -62,14 +62,14 @@ function groupedRecords(records){
 }
 function renderHistory(){
  let wins=0,losses=0;state.records.forEach(r=>{wins+=+r.wins||0;losses+=+r.losses||0});
- $("#summary").innerHTML=`<div class="summary-grid"><div class="stat">勝<strong>${wins}</strong></div><div class="stat">負<strong>${losses}</strong></div><div class="stat">勝率<strong>${rate(wins,losses)}</strong></div></div>`;
+ $("#summary").innerHTML=`<div class="summary-grid"><div class="stat">WIN<strong>${wins}</strong></div><div class="stat">LOSE<strong>${losses}</strong></div><div class="stat">勝率<strong>${rate(wins,losses)}</strong></div></div>`;
  const groups=groupedRecords(state.records);
  if(!Object.keys(groups).length){$("#history").innerHTML="<p class='muted empty'>まだ記録がありません。</p>";return}
  $("#history").innerHTML=Object.entries(groups).map(([player,rows])=>{
    const pw=rows.reduce((n,r)=>n+(+r.wins||0),0),pl=rows.reduce((n,r)=>n+(+r.losses||0),0);
    return `<div class="player-group">
     <div class="player-title"><span>${esc(player)}</span></div>
-    <div class="column-labels"><span>自分のキャラ vs 相手キャラ</span><span>勝</span><span>負</span><span>勝率</span><span></span></div>
+    <div class="column-labels"><span>自分のキャラ vs 相手キャラ</span><span>WIN</span><span>LOSE</span><span>勝率</span><span></span></div>
     ${rows.map(r=>`<div class="record-row">
       <span class="character-name">${esc(r.myCharacter)} vs ${esc(r.opponentCharacter)}</span>
       <span class="count">${r.wins}</span><span class="count">${r.losses}</span><span class="count">${rate(r.wins,r.losses)}</span>
@@ -95,12 +95,12 @@ function renderReports(){
    <div class="report-head"><div><h3>${esc(title)}</h3><div class="report-meta">${esc(rep.createdAt)}</div></div>
    <div class="report-actions"><button data-report-edit="${ri}" title="編集">✎</button><button class="report-delete" data-report-delete="${ri}" title="削除">×</button></div></div>
    ${editing?`<div class="edit-form"><label>タイトル<input data-edit-title="${ri}" maxlength="100" value="${esc(title)}"></label><label>メモ<textarea data-edit-note="${ri}" maxlength="1000">${esc(rep.note||"")}</textarea></label><div class="edit-actions"><button class="save-edit" data-edit-save="${ri}">保存</button><button data-edit-cancel="${ri}">キャンセル</button></div></div>`:""}
-   <div class="summary-grid report-summary"><div class="stat">勝<strong>${totalW}</strong></div><div class="stat">負<strong>${totalL}</strong></div><div class="stat">勝率<strong>${rate(totalW,totalL)}</strong></div></div>
+   <div class="summary-grid report-summary"><div class="stat">WIN<strong>${totalW}</strong></div><div class="stat">LOSE<strong>${totalL}</strong></div><div class="stat">勝率<strong>${rate(totalW,totalL)}</strong></div></div>
    ${Object.entries(groups).map(([player,rows])=>{
     const pw=rows.reduce((n,r)=>n+(+r.wins||0),0),pl=rows.reduce((n,r)=>n+(+r.losses||0),0);
     return `<div class="player-group">
       <div class="player-title"><span>${esc(player)}</span></div>
-      <div class="column-labels"><span>自分のキャラ vs 相手キャラ</span><span>勝</span><span>負</span><span>勝率</span><span></span></div>
+      <div class="column-labels"><span>自分のキャラ vs 相手キャラ</span><span>WIN</span><span>LOSE</span><span>勝率</span><span></span></div>
       ${rows.map(r=>`<div class="record-row">
        <span class="character-name">${esc(r.myCharacter)} vs ${esc(r.opponentCharacter)}</span>
        <span class="count">${r.wins}</span><span class="count">${r.losses}</span><span class="count">${rate(r.wins,r.losses)}</span><span></span>
