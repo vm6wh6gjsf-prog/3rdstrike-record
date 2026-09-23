@@ -1,10 +1,1 @@
-{
-  "name": "格闘ゲーム戦績記録",
-  "short_name": "戦績記録",
-  "start_url": "./",
-  "display": "standalone",
-  "background_color": "#f3f4f6",
-  "theme_color": "#111827",
-  "lang": "ja",
-  "icons": [{"src":"icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}]
-}
+{"name":"3rdストライク戦績","short_name":"3rd戦績","start_url":"./","display":"standalone","background_color":"#f3f4f6","theme_color":"#111827","lang":"ja","icons":[{"src":"icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}]}
