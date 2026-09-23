@@ -1,4 +1,4 @@
-const KEY="fg-record-v4";
+const KEY="fg-record-v5";
 const INITIAL=["アレックス","ダッドリー","エレナ","ヒューゴー","いぶき","ケン","まこと","ネクロ","オロ","Q","リュウ","ショーン","トゥエルヴ","ユリアン","ヤン","ユン","春麗","豪鬼","レミー"];
 const defaults={players:["不明"],records:[],reports:[]};
 let state=load();const $=s=>document.querySelector(s);
@@ -17,6 +17,7 @@ function esc(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",
 function toast(s){let e=$("#toast");e.textContent=s;e.classList.add("show");clearTimeout(toast.t);toast.t=setTimeout(()=>e.classList.remove("show"),1800)}
 function opts(a,v){return a.map(x=>`<option value="${esc(x)}" ${x===v?"selected":""}>${esc(x)}</option>`).join("")}
 function rate(w,l){return w+l?Math.round(w/(w+l)*100)+"%":"—"}
+function battles(w,l){return (w+l)+"戦"}
 
 function addRow(character){
  const r=document.createElement("div");r.className="match-row";r.dataset.w=0;r.dataset.l=0;
@@ -27,8 +28,7 @@ function addRow(character){
  r.querySelector(".loss").onclick=()=>{r.dataset.l++;r.querySelector(".loss .count-value").textContent=r.dataset.l};
  r.querySelector(".remove-row").onclick=()=>{
    if($("#matchRows").firstElementChild===r){
-     r.dataset.w=0;r.dataset.l=0;
-     r.querySelector(".win .count-value").textContent="0";r.querySelector(".loss .count-value").textContent="0";
+     r.dataset.w=0;r.dataset.l=0;r.querySelector(".win .count-value").textContent="0";r.querySelector(".loss .count-value").textContent="0";
    }else r.remove();
  };
  $("#matchRows").appendChild(r);
@@ -56,19 +56,18 @@ function normalize(){
 normalize();
 
 function groupedRecords(records){
- const groups={};
- records.forEach((r,i)=>(groups[r.player]??=[]).push({...r,index:i}));
- return groups;
+ const groups={};records.forEach((r,i)=>(groups[r.player]??=[]).push({...r,index:i}));return groups;
 }
 function renderHistory(){
  let wins=0,losses=0;state.records.forEach(r=>{wins+=+r.wins||0;losses+=+r.losses||0});
- $("#summary").innerHTML=`<div class="summary-grid"><div class="stat">勝利<strong>${wins}</strong></div><div class="stat">敗北<strong>${losses}</strong></div><div class="stat">勝率<strong>${rate(wins,losses)}</strong></div></div>`;
+ $("#summary").innerHTML=`<div class="summary-grid"><div class="stat">勝利<strong>${wins}</strong></div><div class="stat">敗北<strong>${losses}</strong></div><div class="stat">対戦数<strong>${wins+losses}</strong></div></div>`;
  const groups=groupedRecords(state.records);
  if(!Object.keys(groups).length){$("#history").innerHTML="<p class='muted empty'>まだ記録がありません。</p>";return}
  $("#history").innerHTML=Object.entries(groups).map(([player,rows])=>{
    const pw=rows.reduce((n,r)=>n+(+r.wins||0),0),pl=rows.reduce((n,r)=>n+(+r.losses||0),0);
    return `<div class="player-group">
     <div class="player-title"><span>${esc(player)}</span><span class="rate">勝率 ${rate(pw,pl)}</span></div>
+    <div class="player-stats"><span>勝 ${pw}</span><span>負 ${pl}</span><span>対戦数 ${pw+pl}</span></div>
     <div class="column-labels"><span>自分のキャラ / 相手キャラ</span><span>勝</span><span>負</span><span>勝率</span><span></span></div>
     ${rows.map(r=>`<div class="record-row">
       <span class="character-name">${esc(r.myCharacter)} / ${esc(r.opponentCharacter)}</span>
@@ -79,35 +78,37 @@ function renderHistory(){
  }).join("");
 }
 
-function snapshot(){
- return JSON.parse(JSON.stringify(state.records));
-}
+function snapshot(){return JSON.parse(JSON.stringify(state.records))}
 function renderReports(){
  if(!state.reports.length){$("#reports").innerHTML="<p class='muted empty'>まだレポートがありません。</p>";return}
  $("#reports").innerHTML=state.reports.map((rep,ri)=>{
   const groups=groupedRecords(rep.records);
   let totalW=0,totalL=0;rep.records.forEach(r=>{totalW+=+r.wins||0;totalL+=+r.losses||0});
+  const editing=rep.editing===true;
+  const title=rep.title||`レポート ${ri+1}`;
   return `<div class="report-card">
-   <div class="report-head"><div><h3>レポート ${ri+1}</h3><div class="report-meta">${esc(rep.createdAt)}</div></div><button class="report-delete" data-report-delete="${ri}" title="削除">×</button></div>
-   <div class="summary-grid report-summary"><div class="stat">勝利<strong>${totalW}</strong></div><div class="stat">敗北<strong>${totalL}</strong></div><div class="stat">勝率<strong>${rate(totalW,totalL)}</strong></div></div>
+   <div class="report-head"><div><h3>${esc(title)}</h3><div class="report-meta">${esc(rep.createdAt)}</div></div>
+   <div class="report-actions"><button data-report-edit="${ri}" title="編集">✎</button><button class="report-delete" data-report-delete="${ri}" title="削除">×</button></div></div>
+   ${editing?`<div class="edit-form"><label>タイトル<input data-edit-title="${ri}" maxlength="100" value="${esc(title)}"></label><label>メモ<textarea data-edit-note="${ri}" maxlength="1000">${esc(rep.note||"")}</textarea></label><div class="edit-actions"><button class="save-edit" data-edit-save="${ri}">保存</button><button data-edit-cancel="${ri}">キャンセル</button></div></div>`:""}
+   <div class="summary-grid report-summary"><div class="stat">勝利<strong>${totalW}</strong></div><div class="stat">敗北<strong>${totalL}</strong></div><div class="stat">対戦数<strong>${totalW+totalL}</strong></div></div>
    ${Object.entries(groups).map(([player,rows])=>{
     const pw=rows.reduce((n,r)=>n+(+r.wins||0),0),pl=rows.reduce((n,r)=>n+(+r.losses||0),0);
     return `<div class="report-player"><div class="report-player-head"><span>${esc(player)}</span><span class="rate">勝率 ${rate(pw,pl)}</span></div>
-    ${rows.map(r=>`<div class="report-match"><span>${esc(r.myCharacter)} / ${esc(r.opponentCharacter)}</span><span>${r.wins}勝 ${r.losses}敗　${rate(r.wins,r.losses)}</span></div>`).join("")}</div>`
+    <div class="report-player-stats">勝 ${pw}　負 ${pl}　対戦数 ${pw+pl}</div>
+    ${rows.map(r=>`<div class="report-match"><span>${esc(r.myCharacter)} / ${esc(r.opponentCharacter)}</span><span>勝 ${r.wins}　負 ${r.losses}　対戦数 ${(+r.wins||0)+(+r.losses||0)}　勝率 ${rate(r.wins,r.losses)}</span></div>`).join("")}</div>`
    }).join("")}
-   <div class="report-note"><label>メモ<textarea data-note="${ri}" maxlength="1000" placeholder="このレポートのメモ">${esc(rep.note||"")}</textarea></label><div class="report-note-actions"><button type="button" class="save-note" data-note-save="${ri}">メモを保存</button></div></div>
+   ${!editing?`<div class="report-note"><div class="muted">メモ</div><textarea data-note="${ri}" maxlength="1000" placeholder="このレポートのメモ">${esc(rep.note||"")}</textarea><div class="report-note-actions"><button class="save-note" data-note-save="${ri}">メモを保存</button></div></div>`:""}
   </div>`;
  }).join("");
 }
 
 function renderPlayers(){
- $("#playerList").innerHTML=state.players.map((n,i)=>`<div class="setting-item"><span>${esc(n)}</span><div class="setting-actions">${i?`<button data-ep="${i}">編集</button><button class="delete" data-dp="${i}">×</button>`:""}</div></div>`).join("");
+ $("#playerList").innerHTML=state.players.map((n,i)=>`<div class="setting-item"><span>${esc(n)}</span><div class="setting-actions">${i?`<button class="delete" data-dp="${i}">×</button>`:""}</div></div>`).join("");
 }
 function render(){renderSelects();renderPlayers();renderHistory();renderReports()}
 
 $("#addMatchRow").onclick=()=>{
- const rows=[...document.querySelectorAll(".opponent-character")];
- addRow(rows.length?rows[rows.length-1].value:INITIAL[0]);
+ const rows=[...document.querySelectorAll(".opponent-character")];addRow(rows.length?rows[rows.length-1].value:INITIAL[0]);
 };
 
 $("#battleForm").onsubmit=e=>{
@@ -129,7 +130,7 @@ $("#battleForm").onsubmit=e=>{
 
 $("#saveReport").onclick=()=>{
  if(!state.records.length)return toast("記録する戦績がありません");
- state.reports.push({createdAt:new Date().toLocaleString("ja-JP"),records:snapshot(),note:""});
+ state.reports.push({title:`レポート ${state.reports.length+1}`,createdAt:new Date().toLocaleString("ja-JP"),records:snapshot(),note:"",editing:false});
  save();renderReports();toast("レポートを記録しました");
 };
 
@@ -138,30 +139,28 @@ $("#playerForm").onsubmit=e=>{
  if(state.players.includes(n))return toast("同じ名前が既にあります");
  state.players.push(n);save();i.value="";render();toast("追加しました");
 };
-
 function replacePlayer(a,b){state.records.forEach(r=>{if(r.player===a)r.player=b})}
 
 document.addEventListener("click",e=>{
  const t=e.target;
  if(t.dataset.delete!==undefined){
   const i=+t.dataset.delete;
-  if(confirm(`「${state.records[i].myCharacter} / ${state.records[i].player} / ${state.records[i].opponentCharacter}」を削除しますか？`)){
-   state.records.splice(i,1);save();renderHistory();toast("組み合わせを削除しました");
-  }
+  if(confirm(`「${state.records[i].myCharacter} / ${state.records[i].player} / ${state.records[i].opponentCharacter}」を削除しますか？`)){state.records.splice(i,1);save();renderHistory();toast("組み合わせを削除しました")}
  }
  if(t.dataset.reportDelete!==undefined){
   const i=+t.dataset.reportDelete;
-  if(confirm(`レポート ${i+1} を削除しますか？`)){state.reports.splice(i,1);save();renderReports();toast("レポートを削除しました")}
+  if(confirm(`「${state.reports[i].title||"レポート"}」を削除しますか？`)){state.reports.splice(i,1);save();renderReports();toast("レポートを削除しました")}
  }
- if(t.dataset.noteSave!==undefined){
-  const i=+t.dataset.noteSave;const ta=document.querySelector(`[data-note="${i}"]`);
-  state.reports[i].note=ta.value;save();toast("メモを保存しました");
+ if(t.dataset.reportEdit!==undefined){state.reports[+t.dataset.reportEdit].editing=true;renderReports()}
+ if(t.dataset.editCancel!==undefined){state.reports[+t.dataset.editCancel].editing=false;save();renderReports()}
+ if(t.dataset.editSave!==undefined){
+  const i=+t.dataset.editSave;
+  const title=document.querySelector(`[data-edit-title="${i}"]`).value.trim()||`レポート ${i+1}`;
+  const note=document.querySelector(`[data-edit-note="${i}"]`).value;
+  state.reports[i].title=title;state.reports[i].note=note;state.reports[i].editing=false;save();renderReports();toast("レポートを更新しました");
  }
- if(t.dataset.ep){
-  const i=+t.dataset.ep,n=prompt("新しいプレイヤー名",state.players[i])?.trim();
-  if(n&&!state.players.includes(n)){replacePlayer(state.players[i],n);state.players[i]=n;save();render();toast("変更しました")}
- }
- if(t.dataset.dp){
+ if(t.dataset.noteSave!==undefined){const i=+t.dataset.noteSave;state.reports[i].note=document.querySelector(`[data-note="${i}"]`).value;save();toast("メモを保存しました")}
+ if(t.dataset.dp!==undefined){
   const i=+t.dataset.dp;
   if(confirm(`「${state.players[i]}」を削除しますか？`)){replacePlayer(state.players[i],"不明");state.players.splice(i,1);save();render();toast("削除しました")}
  }

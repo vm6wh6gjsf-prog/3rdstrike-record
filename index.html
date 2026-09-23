@@ -6,15 +6,16 @@
 <meta name="theme-color" content="#111827">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="3rd戦績">
+<meta name="apple-mobile-web-app-title" content="3rd対戦記録">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="apple-touch-icon" href="icon.svg">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" type="image/png" sizes="180x180" href="icon-180.png">
 <link rel="stylesheet" href="style.css">
-<title>3rdストライク戦績</title>
+<title>3rd対戦記録</title>
 </head>
 <body>
 <main>
-<header class="topbar"><h1>3rdストライク戦績</h1></header>
+<header class="topbar"><h1>3rd対戦記録</h1></header>
 
 <section id="inputTab" class="tab-panel">
 <form id="battleForm">
@@ -22,20 +23,21 @@
 <h2>対戦を記録</h2>
 <label>自分のキャラ<select id="myCharacter" required></select></label>
 <label>相手プレイヤー<select id="opponentPlayer" required></select></label>
-</div>
 
-<div class="card">
-<div class="section-heading"><h2>相手キャラ・勝敗</h2><button id="addMatchRow" type="button" class="small-button">＋追加</button></div>
-<p class="muted">「勝」「負」を押した回数が、そのまま記録されます。1件目の「×」は勝敗数をリセットします。</p>
+<div class="match-box">
+<div class="section-heading"><h3>相手キャラ・勝敗</h3><button id="addMatchRow" type="button" class="small-button">＋追加</button></div>
+<p class="muted">「勝」「負」を押した回数が、そのまま記録されます。</p>
 <div id="matchRows"></div>
+</div>
 </div>
 <button class="primary-button" type="submit">この内容を記録する</button>
 </form>
 
 <section class="card">
-<div class="section-heading"><h2>集計戦績</h2><button id="saveReport" type="button" class="secondary-button">レポートに記録する</button></div>
+<div class="section-heading"><h2>集計戦績</h2></div>
 <div id="summary"></div>
 <div id="history"></div>
+<button id="saveReport" type="button" class="primary-button report-button">レポートに記録する</button>
 </section>
 
 <section class="card danger-card">
@@ -48,7 +50,7 @@
 <section id="reportTab" class="tab-panel hidden">
 <section class="card">
 <h2>戦績レポート</h2>
-<p class="muted">「レポートに記録する」を押した時点の集計戦績を保存します。後から戦績を変更しても、保存済みレポートは変わりません。</p>
+<p class="muted">保存した時点の集計戦績です。現在の戦績を変更しても、保存済みレポートは変わりません。</p>
 <div id="reports"></div>
 </section>
 </section>
@@ -76,7 +78,6 @@
 <button class="nav-item" data-tab="reportTab" type="button">📊<span>戦績レポート</span></button>
 <button class="nav-item" data-tab="playersTab" type="button">👤<span>プレイヤー設定</span></button>
 </nav>
-
 <div id="toast" class="toast"></div>
 <script src="app.js"></script>
 <script>if("serviceWorker" in navigator){navigator.serviceWorker.register("./sw.js").catch(()=>{});}</script>
