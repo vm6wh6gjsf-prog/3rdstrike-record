@@ -542,3 +542,23 @@ button {
 .character-sort-item.dragging{
   position:relative;z-index:5;opacity:.72;
 }
+
+/* v29: make the held character card unmistakable while dragging */
+.character-sort-item{
+  transition:transform .12s ease, box-shadow .12s ease, border-color .12s ease, background .12s ease;
+}
+.character-sort-item.dragging{
+  opacity:1 !important;
+  transform:scale(1.035);
+  border:2px solid #2563eb !important;
+  background:#fff !important;
+  box-shadow:0 10px 24px rgba(0,0,0,.22) !important;
+  z-index:20 !important;
+}
+.character-sort-item.dragging .drag-handle{
+  background:#eff6ff !important;
+  border-radius:8px;
+}
+.character-sort-item.dragging .drag-handle span{
+  background:#2563eb !important;
+}
