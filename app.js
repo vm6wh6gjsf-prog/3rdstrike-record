@@ -93,15 +93,20 @@ function renderReports(){
    <div class="summary-grid report-summary"><div class="stat">勝利<strong>${totalW}</strong></div><div class="stat">敗北<strong>${totalL}</strong></div><div class="stat">勝率<strong>${rate(totalW,totalL)}</strong></div></div>
    ${Object.entries(groups).map(([player,rows])=>{
     const pw=rows.reduce((n,r)=>n+(+r.wins||0),0),pl=rows.reduce((n,r)=>n+(+r.losses||0),0);
-    return `<div class="report-player"><div class="report-player-head"><span>${esc(player)}</span><span class="rate">勝率 ${rate(pw,pl)}</span></div>
-    <div class="report-player-stats">勝 ${pw}　負 ${pl}</div>
-    ${rows.map(r=>`<div class="report-match"><span>${esc(r.myCharacter)} / ${esc(r.opponentCharacter)}</span><span>勝 ${r.wins}　負 ${r.losses}　勝率 ${rate(r.wins,r.losses)}</span></div>`).join("")}</div>`
+    return `<div class="player-group">
+      <div class="player-title"><span>${esc(player)}</span><span class="rate">勝率 ${rate(pw,pl)}</span></div>
+      <div class="player-stats"><span>勝 ${pw}</span><span>負 ${pl}</span></div>
+      <div class="column-labels"><span>自分のキャラ / 相手キャラ</span><span>勝</span><span>負</span><span>勝率</span><span></span></div>
+      ${rows.map(r=>`<div class="record-row">
+       <span class="character-name">${esc(r.myCharacter)} / ${esc(r.opponentCharacter)}</span>
+       <span class="count">${r.wins}</span><span class="count">${r.losses}</span><span class="count">${rate(r.wins,r.losses)}</span><span></span>
+      </div>`).join("")}
+    </div>`
    }).join("")}
    ${!editing?`<div class="report-note-view"><div class="report-note-label">メモ</div><div class="report-note-text">${rep.note?esc(rep.note):"メモはありません。"}</div></div>`:""}
   </div>`;
  }).join("");
 }
-
 function renderPlayers(){
  $("#playerList").innerHTML=state.players.map((n,i)=>`<div class="setting-item"><span>${esc(n)}</span><div class="setting-actions">${i?`<button class="delete" data-dp="${i}">×</button>`:""}</div></div>`).join("");
 }

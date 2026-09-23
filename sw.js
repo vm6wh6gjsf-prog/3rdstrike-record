@@ -1,25 +1,5 @@
-const CACHE_NAME="fg-record-v7";
-const APP_FILES=["./","./index.html","./style.css?v=7","./app.js?v=7","./manifest.webmanifest","./icon-180.png"];
-self.addEventListener("install",event=>{
-  event.waitUntil(caches.open(CACHE_NAME).then(cache=>cache.addAll(APP_FILES)).then(()=>self.skipWaiting()));
-});
-self.addEventListener("activate",event=>{
-  event.waitUntil(
-    caches.keys().then(keys=>Promise.all(keys.map(k=>k===CACHE_NAME?null:caches.delete(k))))
-    .then(()=>self.clients.claim())
-  );
-});
-self.addEventListener("fetch",event=>{
-  const url=new URL(event.request.url);
-  if(event.request.method!=="GET") return;
-  // Always try the network first for app shell/assets so GitHub Pages deployments are visible immediately.
-  if(url.origin===self.location.origin){
-    event.respondWith(
-      fetch(event.request,{cache:"no-store"}).then(response=>{
-        const copy=response.clone();
-        caches.open(CACHE_NAME).then(cache=>cache.put(event.request,copy)).catch(()=>{});
-        return response;
-      }).catch(()=>caches.match(event.request).then(r=>r||caches.match("./index.html")))
-    );
-  }
-});
+const CACHE_NAME="fg-record-v8";
+const APP_FILES=["./","./index.html","./style.css?v=8","./app.js?v=8","./manifest.webmanifest","./icon-180.png"];
+self.addEventListener("install",e=>e.waitUntil(caches.open(CACHE_NAME).then(c=>c.addAll(APP_FILES)).then(()=>self.skipWaiting())));
+self.addEventListener("activate",e=>e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE_NAME).map(k=>caches.delete(k)))).then(()=>self.clients.claim())));
+self.addEventListener("fetch",e=>{if(e.request.method!=="GET")return;const u=new URL(e.request.url);if(u.origin===self.location.origin)e.respondWith(fetch(e.request,{cache:"no-store"}).then(r=>{const c=r.clone();caches.open(CACHE_NAME).then(x=>x.put(e.request,c));return r}).catch(()=>caches.match(e.request).then(r=>r||caches.match("./index.html"))));});
