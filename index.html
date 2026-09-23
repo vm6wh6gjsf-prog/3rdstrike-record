@@ -1,12 +1,89 @@
-<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#111827"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="3rd戦績"><link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icon-180.png"><title>3rd STRIKE 戦績</title><style>
-:root{font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",sans-serif;color:#111827;background:#f3f4f6}*{box-sizing:border-box}body{margin:0;padding-bottom:24px;background:#f3f4f6}header{background:#111827;color:#fff;padding:18px 16px;position:sticky;top:0;z-index:10}header b{font-size:20px}.sub{font-size:12px;color:#cbd5e1;margin-top:3px}main{max-width:760px;margin:auto;padding:12px}.card{background:#fff;border-radius:16px;padding:16px;margin:0 0 12px;box-shadow:0 1px 3px #0000000d}h2{font-size:17px;margin:0 0 12px}label{display:block;font-size:12px;color:#64748b;margin:9px 0 4px}input,select,textarea,button{width:100%;font:inherit;border-radius:11px;padding:11px;border:1px solid #cbd5e1;background:#fff}textarea{min-height:72px}button{border:0;background:#111827;color:#fff;font-weight:700;margin-top:10px}button.secondary{background:#e5e7eb;color:#111827}.danger{background:#fee2e2;color:#991b1b}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.stat{background:#f8fafc;border-radius:12px;padding:11px;text-align:center}.stat b{display:block;font-size:20px}.stat small{color:#64748b}.result-buttons{display:grid;grid-template-columns:1fr 1fr;gap:8px}.result-buttons button{margin-top:0;border:2px solid #e5e7eb;background:#fff;color:#111827}.result-buttons .win.on{border-color:#16a34a;background:#f0fdf4;color:#15803d}.result-buttons .lose.on{border-color:#dc2626;background:#fef2f2;color:#b91c1c}.tabs{display:flex;gap:6px;margin-bottom:12px}.tabs button{margin:0;background:#e5e7eb;color:#374151;padding:9px}.tabs button.on{background:#111827;color:#fff}table{width:100%;border-collapse:collapse;font-size:13px}th,td{padding:8px 5px;border-bottom:1px solid #eef2f7;text-align:left}.win{color:#15803d}.lose{color:#b91c1c}.muted{color:#64748b;font-size:12px}.empty{text-align:center;color:#64748b;padding:18px 5px}.item{padding:10px 0;border-bottom:1px solid #eef2f7}.meta{font-size:12px;color:#64748b;margin-top:3px}.notice{background:#fffbeb;border:1px solid #fde68a;color:#92400e;border-radius:12px;padding:10px;font-size:12px;line-height:1.5}@media(max-width:520px){.grid2{grid-template-columns:1fr}}
-</style></head><body><header><b>3rd STRIKE 戦績</b><div class="sub">自分用・端末内保存 / iPhoneホーム画面対応</div></header><main>
-<section class="card"><h2>対戦を記録</h2><div class="grid2"><div><label>自分のキャラ</label><select id="myChar"></select></div><div><label>相手プレイヤー</label><input id="player" list="players" placeholder="例：トドロキ"><datalist id="players"></datalist></div></div><label>相手キャラ</label><select id="oppChar"></select><label>勝敗</label><div class="result-buttons"><button class="win" data-result="win">勝ち</button><button class="lose" data-result="lose">負け</button></div><div class="grid2"><div><label>日付</label><input type="date" id="date"></div><div><label>メモ</label><input id="memo" placeholder="任意"></div></div><button id="save">対戦を記録する</button></section>
-<section class="card"><h2>全体</h2><div class="grid3"><div class="stat"><b id="games">0</b><small>試合</small></div><div class="stat"><b id="wins">0</b><small>勝ち</small></div><div class="stat"><b id="rate">0%</b><small>勝率</small></div></div></section>
-<section class="card"><h2>成績を見る</h2><div class="tabs"><button class="on" data-tab="player">プレイヤー別</button><button data-tab="char">相手キャラ別</button><button data-tab="my">自キャラ別</button></div><div class="grid2"><div><label>自キャラで絞る</label><select id="filterMy"></select></div><div><label>相手プレイヤーで絞る</label><select id="filterPlayer"></select></div></div><label>相手キャラで絞る</label><select id="filterOpp"></select><div id="summary" style="margin-top:10px"></div></section>
-<section class="card"><h2>対戦履歴</h2><div id="history"></div></section>
-<section class="card"><h2>データ</h2><div class="notice">戦績はこのiPhoneのブラウザ内に保存します。公開サイト上に戦績データを置く方式ではありません。</div><button class="secondary" id="fgimport">FGNote JSONを読み込む</button><input type="file" id="fgfile" accept=".json,application/json" hidden><button class="secondary" id="export">バックアップを書き出す</button><button class="secondary" id="restore">バックアップを復元</button><input type="file" id="restorefile" accept=".json,application/json" hidden><button class="danger" id="clear">戦績を全削除</button></section>
-<section class="card"><h2>相手プレイヤー・キャラ</h2><p class="muted">対戦を記録すると自動登録されます。</p><div class="grid2"><input id="newPlayer" placeholder="プレイヤー名"><button id="addPlayer" class="secondary">プレイヤーを追加</button></div><div class="grid2"><input id="newChar" placeholder="相手キャラ名"><button id="addChar" class="secondary">キャラを追加</button></div><div id="lists"></div></section></main>
-<script>
-const KEY="thirdstrike_records_v2",META="thirdstrike_meta_v2",chars0=["アレックス","春麗","ダッドリー","エレナ","ヒューゴー","いぶき","ケン","まこと","オロ","Q","リュウ","ショーン","ユリアン","ヤン","ユン"];let data=JSON.parse(localStorage.getItem(KEY)||"[]"),meta=JSON.parse(localStorage.getItem(META)||JSON.stringify({chars:chars0,players:[]})),result=null,tab="player";const $=id=>document.getElementById(id),esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])),rate=(w,n)=>n?(w/n*100).toFixed(1)+"%":"0%";function opts(id,a,all=false){$(id).innerHTML=(all?'<option value="">すべて</option>':"")+a.map(x=>`<option>${esc(x)}</option>`).join("")}function refresh(){opts("myChar",meta.chars);opts("oppChar",meta.chars);opts("filterMy",meta.chars,true);opts("filterOpp",meta.chars,true);opts("filterPlayer",meta.players,true);$("players").innerHTML=meta.players.map(x=>`<option value="${esc(x)}">`).join("")}function filtered(){return data.filter(x=>(!$("filterMy").value||x.myChar===$("filterMy").value)&&(!$("filterPlayer").value||x.player===$("filterPlayer").value)&&(!$("filterOpp").value||x.oppChar===$("filterOpp").value))}function render(){refresh();let w=data.filter(x=>x.result==="win").length;$("games").textContent=data.length;$("wins").textContent=w;$("rate").textContent=rate(w,data.length);let g={};filtered().forEach(x=>{let k=tab==="player"?x.player:tab==="char"?x.oppChar:x.myChar;if(!g[k])g[k]=[0,0];g[k][x.result==="win"?0:1]++});let rows=Object.entries(g).sort((a,b)=>(b[1][0]+b[1][1])-(a[1][0]+a[1][1]));$("summary").innerHTML=rows.length?`<table><tr><th>${tab==="player"?"プレイヤー":tab==="char"?"相手キャラ":"自キャラ"}</th><th>勝</th><th>負</th><th>勝率</th></tr>${rows.map(([k,v])=>`<tr><td>${esc(k)}</td><td class="win">${v[0]}</td><td class="lose">${v[1]}</td><td>${rate(v[0],v[0]+v[1])}</td></tr>`).join("")}</table>`:'<div class="empty">条件に一致する記録がありません</div>';$("history").innerHTML=data.slice().sort((a,b)=>b.date.localeCompare(a.date)||b.id-a.id).map(x=>`<div class="item"><b class="${x.result==="win"?"win":"lose"}">${x.result==="win"?"WIN":"LOSE"}</b>　${esc(x.myChar)} vs <b>${esc(x.player)}</b> / ${esc(x.oppChar)}<div class="meta">${esc(x.date)}${x.memo?"　"+esc(x.memo):""}</div></div>`).join("")||'<div class="empty">まだ対戦記録がありません</div>';$("lists").innerHTML=`<div class="muted">プレイヤー：${meta.players.map(esc).join("、")||"なし"}<br>キャラ：${meta.chars.map(esc).join("、")}</div>`}document.querySelectorAll("[data-result]").forEach(b=>b.onclick=()=>{document.querySelectorAll("[data-result]").forEach(x=>x.classList.remove("on"));b.classList.add("on");result=b.dataset.result});document.querySelectorAll("[data-tab]").forEach(b=>b.onclick=()=>{document.querySelectorAll("[data-tab]").forEach(x=>x.classList.remove("on"));b.classList.add("on");tab=b.dataset.tab;render()});["filterMy","filterPlayer","filterOpp"].forEach(id=>$(id).onchange=render);$("date").value=new Date().toISOString().slice(0,10);function saveAll(){localStorage.setItem(KEY,JSON.stringify(data));localStorage.setItem(META,JSON.stringify(meta))}$("save").onclick=()=>{let p=$("player").value.trim();if(!p||!result)return alert("相手プレイヤーと勝敗を入力してください");data.push({id:Date.now(),myChar:$("myChar").value,player:p,oppChar:$("oppChar").value,result,date:$("date").value,memo:$("memo").value.trim()});if(!meta.players.includes(p))meta.players.push(p);saveAll();$("player").value="";$("memo").value="";document.querySelectorAll("[data-result]").forEach(x=>x.classList.remove("on"));result=null;render()};$("addPlayer").onclick=()=>{let p=$("newPlayer").value.trim();if(p&&!meta.players.includes(p)){meta.players.push(p);$("newPlayer").value="";saveAll();render()}};$("addChar").onclick=()=>{let c=$("newChar").value.trim();if(c&&!meta.chars.includes(c)){meta.chars.push(c);$("newChar").value="";saveAll();render()}};function download(name,text){let a=document.createElement("a");a.href=URL.createObjectURL(new Blob([text],{type:"application/json"}));a.download=name;a.click()}$("export").onclick=()=>download("3rdstrike_backup.json",JSON.stringify({version:2,records:data,meta},null,2));$("restore").onclick=()=>$("restorefile").click();$("restorefile").onchange=e=>{let r=new FileReader();r.onload=()=>{try{let d=JSON.parse(r.result);if(!Array.isArray(d.records))throw 0;data=d.records;meta=d.meta||meta;saveAll();render();alert("復元しました")}catch{alert("バックアップ形式を読み込めません")}};r.readAsText(e.target.files[0])};$("fgimport").onclick=()=>$("fgfile").click();$("fgfile").onchange=e=>{let r=new FileReader();r.onload=()=>{try{let d=JSON.parse(r.result),cb=Object.fromEntries((d.characters||[]).map(c=>[c.id,c.name])),game=(d.games||[]).find(g=>/3rd|third/i.test(g.name)),logs=(d.matchLogs||[]).filter(x=>!game||!x.character_id||((d.characters||[]).find(c=>c.id===x.character_id)?.game_id===game.id)),n=0;logs.forEach(x=>{let my=cb[x.character_id]||"不明";if(my.includes("/"))my=my.split("/").pop();let p=x.opponent_name||"不明",oc="";if(p.includes("/")){let a=p.split("/");oc=a.pop();p=a.join("/")}data.push({id:Date.now()+n,myChar:my,player:p,oppChar:oc||"不明",result:x.result,date:(x.played_at||"").slice(0,10),memo:x.memo||""});if(!meta.players.includes(p))meta.players.push(p);if(oc&&!meta.chars.includes(oc))meta.chars.push(oc);n++});saveAll();render();alert(n+"件の対戦記録を取り込みました")}catch{alert("FGNote JSONの読み込みに失敗しました")}};r.readAsText(e.target.files[0])};$("clear").onclick=()=>{if(confirm("このiPhoneに保存されている戦績を全て削除しますか？")){data=[];saveAll();render()}};if("serviceWorker"in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{});render();
-</script></body></html>
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#111827">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="戦績記録">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" href="icon.svg">
+  <link rel="stylesheet" href="style.css">
+  <title>格闘ゲーム戦績記録</title>
+</head>
+<body>
+  <main id="app">
+    <header class="topbar">
+      <h1>格闘ゲーム戦績</h1>
+      <button id="resetAll" class="text-button" type="button">データ削除</button>
+    </header>
+
+    <section id="battleTab" class="tab-panel">
+      <form id="battleForm">
+        <div class="card">
+          <h2>対戦を記録</h2>
+          <label>自分のキャラ
+            <select id="myCharacter" required></select>
+          </label>
+          <label>相手プレイヤー
+            <select id="opponentPlayer" required></select>
+          </label>
+        </div>
+
+        <div class="card">
+          <div class="section-heading">
+            <h2>相手キャラ・勝敗</h2>
+            <button id="addMatchRow" type="button" class="small-button">＋追加</button>
+          </div>
+          <div id="matchRows"></div>
+        </div>
+
+        <button class="primary-button" type="submit">この内容を記録する</button>
+      </form>
+
+      <section class="card">
+        <div class="section-heading">
+          <h2>戦績</h2>
+          <span id="recordCount" class="muted"></span>
+        </div>
+        <div id="summary"></div>
+        <div id="history"></div>
+      </section>
+    </section>
+
+    <section id="playersTab" class="tab-panel hidden">
+      <section class="card">
+        <h2>プレイヤー設定</h2>
+        <p class="muted">初期状態では「不明」のみ登録されています。</p>
+        <form id="playerForm" class="inline-form">
+          <input id="playerName" maxlength="30" placeholder="プレイヤー名" required>
+          <button class="primary-button" type="submit">追加</button>
+        </form>
+        <div id="playerList" class="settings-list"></div>
+      </section>
+    </section>
+
+    <section id="charactersTab" class="tab-panel hidden">
+      <section class="card">
+        <h2>キャラ設定</h2>
+        <p class="muted">初期状態では「不明」のみ登録されています。</p>
+        <form id="characterForm" class="inline-form">
+          <input id="characterName" maxlength="30" placeholder="キャラクター名" required>
+          <button class="primary-button" type="submit">追加</button>
+        </form>
+        <div id="characterList" class="settings-list"></div>
+      </section>
+    </section>
+  </main>
+
+  <nav class="bottom-nav" aria-label="メインメニュー">
+    <button class="nav-item active" data-tab="battleTab" type="button">⚔️<span>戦績</span></button>
+    <button class="nav-item" data-tab="playersTab" type="button">👤<span>プレイヤー設定</span></button>
+    <button class="nav-item" data-tab="charactersTab" type="button">🥊<span>キャラ設定</span></button>
+  </nav>
+
+  <div id="toast" class="toast" role="status"></div>
+  <script src="app.js"></script><script>if("serviceWorker" in navigator){navigator.serviceWorker.register("./sw.js").catch(()=>{});}</script>
+</body>
+</html>
