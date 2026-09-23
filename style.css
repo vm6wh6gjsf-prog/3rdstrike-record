@@ -48,3 +48,5 @@ button{font:inherit;cursor:pointer}.primary-button{width:100%;min-height:48px;bo
 .report-note-view{margin-top:12px;padding-top:10px;border-top:1px solid var(--border)}
 .report-note-label{font-size:12px;color:#6b7280;font-weight:600;margin-bottom:5px}
 .report-note-text{font-size:14px;line-height:1.55;white-space:pre-wrap;overflow-wrap:anywhere}
+
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:10px}.version-badge{font-size:11px;color:#6b7280;background:#eef2ff;border-radius:999px;padding:4px 7px}
