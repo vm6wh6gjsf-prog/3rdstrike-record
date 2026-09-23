@@ -4,19 +4,19 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#111827">
-<meta name="app-version" content="v14">
+<meta name="app-version" content="v15">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="3rd対戦記録">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" type="image/png" sizes="180x180" href="icon-180.png">
-<link rel="stylesheet" href="style.css?v=14">
+<link rel="stylesheet" href="style.css?v=15">
 <title>3rd対戦記録</title>
 </head>
 <body>
 <main>
-<header class="topbar"><h1>3rd対戦記録</h1><span class="version-badge">v14</span></header>
+<header class="topbar"><h1>3rd対戦記録</h1><span class="version-badge">v15</span></header>
 
 <section id="inputTab" class="tab-panel">
 <form id="battleForm">
@@ -30,7 +30,7 @@
 <p class="muted">「勝」「負」を押した回数が、そのまま記録されます。</p>
 <div id="matchRows"></div>
 </div>
-<button class="primary-button record-button" type="submit">戦績を記録する</button>
+<button class="primary-button record-button" type="submit">戦績に記録する</button>
 </div>
 </form>
 
@@ -38,7 +38,7 @@
 <div class="section-heading"><h2>戦績</h2></div>
 <div id="summary"></div>
 <div id="history"></div>
-<button id="saveReport" type="button" class="primary-button report-button">レポートに記録する</button>
+<button id="saveReport" type="button" class="primary-button report-button">戦績レポートに記録する</button>
 </section>
 
 <section class="card danger-card">
@@ -80,7 +80,7 @@
 <button class="nav-item" data-tab="playersTab" type="button">👤<span>プレイヤー設定</span></button>
 </nav>
 <div id="toast" class="toast"></div>
-<script src="app.js?v=14"></script>
+<script src="app.js?v=15"></script>
 <script>if("serviceWorker" in navigator){navigator.serviceWorker.register("./sw.js").catch(()=>{});}</script>
 </body>
 </html>
