@@ -95,7 +95,6 @@ function renderReports(){
     const pw=rows.reduce((n,r)=>n+(+r.wins||0),0),pl=rows.reduce((n,r)=>n+(+r.losses||0),0);
     return `<div class="player-group">
       <div class="player-title"><span>${esc(player)}</span></div>
-      <div class="player-stats"><span>勝 ${pw}</span><span>負 ${pl}</span></div>
       <div class="column-labels"><span>自分のキャラ vs 相手キャラ</span><span>勝</span><span>負</span><span>勝率</span><span></span></div>
       ${rows.map(r=>`<div class="record-row">
        <span class="character-name">${esc(r.myCharacter)} vs ${esc(r.opponentCharacter)}</span>
