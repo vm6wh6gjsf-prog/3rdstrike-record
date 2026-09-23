@@ -24,7 +24,7 @@ function addRow(character){
  r.innerHTML=`<label>相手キャラ<select class="opponent-character">${opts(INITIAL,character||INITIAL[0])}</select></label>
  <div class="result-controls">
    <div class="count-buttons"><button type="button" class="count-button win">WIN<span class="count-value">0</span></button><button type="button" class="count-button loss">LOSE<span class="count-value">0</span></button></div>
-   <button type="button" class="clear-row" aria-label="勝敗をクリア" title="クリア">↶</button>
+   <button type="button" class="clear-row" aria-label="入力した勝敗を削除" title="削除">🗑</button>
  </div>`;
  r.querySelector(".win").onclick=()=>{r.dataset.w++;r.querySelector(".win .count-value").textContent=r.dataset.w};
  r.querySelector(".loss").onclick=()=>{r.dataset.l++;r.querySelector(".loss .count-value").textContent=r.dataset.l};
@@ -155,7 +155,7 @@ document.addEventListener("click",e=>{
  const t=e.target;
  if(t.dataset.delete!==undefined){
   const i=+t.dataset.delete;
-  if(confirm(`「${state.records[i].myCharacter} / ${state.records[i].player} / ${state.records[i].opponentCharacter}」を削除しますか？`)){state.records.splice(i,1);save();renderHistory();toast("組み合わせを削除しました")}
+  if(confirm(`「${state.records[i].myCharacter} / ${state.records[i].player} / ${state.records[i].opponentCharacter}」を削除しますか？`)){state.records.splice(i,1);save();renderHistory();toast("戦績を削除しました")}
  }
  if(t.dataset.reportDelete!==undefined){
   const i=+t.dataset.reportDelete;
@@ -176,7 +176,7 @@ document.addEventListener("click",e=>{
 });
 
 $("#deleteRecords").onclick=()=>{
- if(confirm("戦績をすべて削除しますか？")){state.records=[];save();renderHistory();toast("戦績を削除しました")}
+ if(confirm("戦績をすべて削除しますか？")){state.records=[];save();renderHistory();toast("戦績を全て削除しました")}
 };
 $("#resetPlayers").onclick=()=>{
  if(confirm("プレイヤー設定を初期化しますか？")){state.records.forEach(r=>r.player="不明");state.players=["不明"];save();render();toast("初期化しました")}

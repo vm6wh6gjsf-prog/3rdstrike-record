@@ -347,3 +347,8 @@ button {
   font-size:24px !important;
   line-height:1 !important;
 }
+
+/* v21: trash-can reset button. */
+.result-controls .clear-row{
+  font-size:20px !important;
+}
