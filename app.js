@@ -123,18 +123,21 @@ function render(){renderSelects();renderPlayers();renderHistory();renderReports(
 
 $("#battleForm").onsubmit=e=>{
  e.preventDefault();let added=0;
+ const myCharacter=$("#myCharacter").value;
  const selected=[...document.querySelectorAll(".match-row")].map(r=>({character:r.querySelector("select").value,w:+r.dataset.w,l:+r.dataset.l}));
+ if(!myCharacter)return toast("自分のキャラを選択してください");
+ if(selected.some(x=>!x.character))return toast("相手キャラを選択してください");
  selected.forEach(x=>{
   if(!x.w&&!x.l)return;
-  const a=$("#myCharacter").value,b=$("#opponentPlayer").value,c=x.character;
+  const a=myCharacter,b=$("#opponentPlayer").value,c=x.character;
   const o=state.records.find(r=>r.myCharacter===a&&r.player===b&&r.opponentCharacter===c);
   if(o){o.wins+=x.w;o.losses+=x.l}else state.records.push({myCharacter:a,player:b,opponentCharacter:c,wins:x.w,losses:x.l});
   added+=x.w+x.l;
  });
- if(!added)return toast("「勝」または「負」を1回以上押してください");
+ if(!added)return toast("「WIN」または「LOSE」を1回以上押してください");
  save();renderHistory();
  const selectedChars=selected.map(x=>x.character);
- $("#matchRows").innerHTML="";addRow(selectedChars[0]||INITIAL[0]);selectedChars.slice(1).forEach(c=>addRow(c));
+ $("#matchRows").innerHTML="";addRow("");
  toast(`${added}戦を記録しました`);
 };
 
