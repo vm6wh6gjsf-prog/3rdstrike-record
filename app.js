@@ -1,6 +1,6 @@
 const KEY="fg-record-v5";
 const INITIAL=["アレックス","ダッドリー","エレナ","ヒューゴー","いぶき","ケン","まこと","ネクロ","オロ","Q","リュウ","ショーン","トゥエルヴ","ユリアン","ヤン","ユン","春麗","豪鬼","レミー"];
-const defaults={players:["不明"],records:[],reports:[]};
+const defaults={players:["不明"],records:[],reports:[],characterOrder:[...INITIAL]};
 let state=load();const $=s=>document.querySelector(s);
 
 function load(){
@@ -9,7 +9,9 @@ function load(){
   if(!x)return structuredClone(defaults);
   let p=Array.isArray(x.players)&&x.players.length?x.players:["不明"];
   if(!p.includes("不明"))p.unshift("不明");
-  return {players:p,records:Array.isArray(x.records)?x.records:[],reports:Array.isArray(x.reports)?x.reports:[]};
+  let co=Array.isArray(x.characterOrder)?x.characterOrder.filter(c=>INITIAL.includes(c)):[];
+  INITIAL.forEach(c=>{if(!co.includes(c))co.push(c)});
+  return {players:p,records:Array.isArray(x.records)?x.records:[],reports:Array.isArray(x.reports)?x.reports:[],characterOrder:co};
  }catch{return structuredClone(defaults)}
 }
 function save(){localStorage.setItem(KEY,JSON.stringify(state))}
@@ -21,7 +23,7 @@ function battles(w,l){return (w+l)+"戦"}
 
 function addRow(character){
  const r=document.createElement("div");r.className="match-row";r.dataset.w=0;r.dataset.l=0;
- r.innerHTML=`<label>相手キャラ<select class="opponent-character">${opts(INITIAL,character||INITIAL[0])}</select></label>
+ r.innerHTML=`<label>相手キャラ<select class="opponent-character">${opts(state.characterOrder,character||state.characterOrder[0])}</select></label>
  <div class="result-controls">
    <div class="count-buttons"><button type="button" class="count-button win">WIN<span class="count-value">0</span></button><button type="button" class="count-button loss">LOSE<span class="count-value">0</span></button></div>
    <button type="button" class="clear-row" aria-label="入力した勝敗を削除" title="削除">🗑</button>
@@ -38,9 +40,9 @@ function addRow(character){
 
 function renderSelects(){
  let m=$("#myCharacter").value,p=$("#opponentPlayer").value;
- $("#myCharacter").innerHTML=opts(INITIAL,INITIAL.includes(m)?m:INITIAL[0]);
+ $("#myCharacter").innerHTML=opts(state.characterOrder,state.characterOrder.includes(m)?m:state.characterOrder[0]);
  $("#opponentPlayer").innerHTML=opts(state.players,state.players.includes(p)?p:"不明");
- document.querySelectorAll(".opponent-character").forEach(s=>{let v=s.value;s.innerHTML=opts(INITIAL,INITIAL.includes(v)?v:INITIAL[0])});
+ document.querySelectorAll(".opponent-character").forEach(s=>{let v=s.value;s.innerHTML=opts(state.characterOrder,state.characterOrder.includes(v)?v:state.characterOrder[0])});
 }
 
 function normalize(){
@@ -118,15 +120,21 @@ function renderReports(){
 function renderPlayers(){
  $("#playerList").innerHTML=state.players.map((n,i)=>`<div class="setting-item"><span>${esc(n)}</span><div class="setting-actions">${i?`<button class="delete" data-dp="${i}">×</button>`:""}</div></div>`).join("");
 }
-function render(){renderSelects();renderPlayers();renderHistory();renderReports()}
+function renderCharacters(){
+ const box=$("#characterList");if(!box)return;
+ box.innerHTML=state.characterOrder.map((c,i)=>`<div class="character-sort-item"><span class="character-sort-name">${esc(c)}</span><div class="sort-controls"><button type="button" class="sort-button" data-up="${i}" ${i===0?"disabled":""}>↑</button><button type="button" class="sort-button" data-down="${i}" ${i===state.characterOrder.length-1?"disabled":""}>↓</button></div></div>`).join("");
+ box.querySelectorAll("[data-up]").forEach(b=>b.onclick=()=>moveCharacter(+b.dataset.up,-1));
+ box.querySelectorAll("[data-down]").forEach(b=>b.onclick=()=>moveCharacter(+b.dataset.down,1));
+}
+function moveCharacter(i,d){const j=i+d;if(j<0||j>=state.characterOrder.length)return;[state.characterOrder[i],state.characterOrder[j]]=[state.characterOrder[j],state.characterOrder[i]];save();renderCharacters();renderSelects()}
+
+function render(){renderSelects();renderPlayers();renderHistory();renderReports();renderCharacters()}
 
 
 $("#battleForm").onsubmit=e=>{
  e.preventDefault();let added=0;
  const myCharacter=$("#myCharacter").value;
  const selected=[...document.querySelectorAll(".match-row")].map(r=>({character:r.querySelector("select").value,w:+r.dataset.w,l:+r.dataset.l}));
- if(!myCharacter)return toast("自分のキャラを選択してください");
- if(selected.some(x=>!x.character))return toast("相手キャラを選択してください");
  selected.forEach(x=>{
   if(!x.w&&!x.l)return;
   const a=myCharacter,b=$("#opponentPlayer").value,c=x.character;
@@ -137,7 +145,7 @@ $("#battleForm").onsubmit=e=>{
  if(!added)return toast("「WIN」または「LOSE」を1回以上押してください");
  save();renderHistory();
  const selectedChars=selected.map(x=>x.character);
- $("#matchRows").innerHTML="";addRow(selectedChars[0]||"");
+ $("#matchRows").innerHTML="";addRow(selectedChars[0]||state.characterOrder[0]);
  toast(`${added}戦を記録しました`);
 };
 

@@ -4,19 +4,19 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#111827">
-<meta name="app-version" content="v24">
+<meta name="app-version" content="v25">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="3rd対戦記録">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" type="image/png" sizes="180x180" href="icon-180.png">
-<link rel="stylesheet" href="style.css?v=24">
+<link rel="stylesheet" href="style.css?v=25">
 <title>3rd対戦記録</title>
 </head>
 <body>
 <main>
-<header class="topbar"><h1>3rd対戦記録</h1><div class="topbar-actions"><button id="openHelp" class="help-button" type="button">使い方</button><span class="version-badge">v24</span></div></header>
+<header class="topbar"><h1>3rd対戦記録</h1><div class="topbar-actions"><button id="openHelp" class="help-button" type="button">使い方</button><span class="version-badge">v25</span></div></header>
 
 <section id="inputTab" class="tab-panel">
 <form id="battleForm">
@@ -73,10 +73,12 @@
 </section>
 </main>
 
+<section id="charactersTab" class="tab-panel hidden"><section class="card"><h2>キャラ設定</h2><p class="muted">↑・↓ボタンでキャラクターの並び順を変更できます。</p><div id="characterList" class="character-settings-list"></div></section></section>
 <nav class="bottom-nav">
 <button class="nav-item active" data-tab="inputTab" type="button">⚔️<span>戦績入力</span></button>
 <button class="nav-item" data-tab="reportTab" type="button">📊<span>戦績レポート</span></button>
 <button class="nav-item" data-tab="playersTab" type="button">👤<span>プレイヤー設定</span></button>
+<button class="nav-item" data-tab="charactersTab">キャラ設定</button>
 </nav>
 
 <div id="helpModal" class="help-modal hidden" role="dialog" aria-modal="true" aria-labelledby="helpTitle">
@@ -86,9 +88,9 @@
       <button id="closeHelp" class="help-close" type="button" aria-label="使い方を閉じる">×</button>
     </div>
     <div class="help-content">
-      <p>『ストリートファイターIII 3rd STRIKE』の対戦結果を、iPhoneなどのブラウザから手軽に記録・集計するためのアプリです。</p>
+<p>『ストリートファイターIII 3rd STRIKE』の対戦結果を、iPhoneなどのブラウザから手軽に記録・集計するためのアプリです。</p>
 <h3>戦績入力</h3>
-<ol><li>「自分のキャラ」を「選択してください」から選択します。</li><li>「相手プレイヤー」を選択します。</li><li>「相手キャラ」を「選択してください」から選択し、対戦結果に応じて「WIN」または「LOSE」を押します。</li><li>入力が終わったら「戦績に記録する」を押します。</li></ol>
+<ol><li>「自分のキャラ」を選択します。</li><li>「相手プレイヤー」を選択します。</li><li>「相手キャラ」を選択し、対戦結果に応じて「WIN」または「LOSE」を押します。</li><li>入力が終わったら「戦績に記録する」を押します。</li></ol>
 <p>ゴミ箱ボタンを押すと、入力中のWIN・LOSEを0に戻します。</p>
 <h3>戦績</h3>
 <p>記録した対戦結果を、相手プレイヤーとキャラクターの組み合わせごとに確認できます。</p>
@@ -110,12 +112,14 @@
 <p>ブラウザのWebサイトデータを削除すると、記録したデータも消える可能性があります。</p>
 <h3>iPhoneのホーム画面に追加</h3>
 <ol><li>Safariでアプリを開きます。</li><li>Safariの共有ボタンを押します。</li><li>「ホーム画面に追加」を選択します。</li><li>ホーム画面に追加された「3rd対戦記録」から起動できます。</li></ol>
-    </div>
+<h3>キャラ設定</h3>
+<ul><li>19キャラクターの一覧を表示します。</li><li>↑・↓ボタンでキャラクターの並び順を変更できます。</li><li>変更した並び順は、戦績入力などのキャラクター選択欄に反映されます。</li><li>キャラクターの追加・編集・削除はできません。</li></ul>
+</div>
   </div>
 </div>
 
 <div id="toast" class="toast"></div>
-<script src="app.js?v=24"></script>
+<script src="app.js?v=25"></script>
 <script>if("serviceWorker" in navigator){navigator.serviceWorker.register("./sw.js").catch(()=>{});}</script>
 </body>
 </html>
