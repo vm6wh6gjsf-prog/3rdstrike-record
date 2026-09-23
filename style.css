@@ -226,3 +226,19 @@ button[data-remove-row]{
   padding:8px 12px !important;
   font-weight:700 !important;
 }
+
+
+/* v17: Prevent iPhone double-tap zoom when rapidly entering wins/losses. */
+.win-btn,
+.loss-btn,
+button[data-result="win"],
+button[data-result="loss"],
+button[data-action="win"],
+button[data-action="loss"] {
+  touch-action: manipulation !important;
+}
+
+
+button {
+  touch-action: manipulation;
+}

@@ -1,5 +1,5 @@
-const CACHE_NAME="fg-record-v16";
-const APP_FILES=["./","./index.html","./style.css?v=16","./app.js?v=16","./manifest.webmanifest","./icon-180.png"];
+const CACHE_NAME="fg-record-v17";
+const APP_FILES=["./","./index.html","./style.css?v=17","./app.js?v=17","./manifest.webmanifest","./icon-180.png"];
 self.addEventListener("install",e=>e.waitUntil(caches.open(CACHE_NAME).then(c=>c.addAll(APP_FILES)).then(()=>self.skipWaiting())));
 self.addEventListener("activate",e=>e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE_NAME).map(k=>caches.delete(k)))).then(()=>self.clients.claim())));
 self.addEventListener("fetch",e=>{if(e.request.method!=="GET")return;const u=new URL(e.request.url);if(u.origin===self.location.origin)e.respondWith(fetch(e.request,{cache:"no-store"}).then(r=>{const c=r.clone();caches.open(CACHE_NAME).then(x=>x.put(e.request,c));return r}).catch(()=>caches.match(e.request).then(r=>r||caches.match("./index.html"))));});
