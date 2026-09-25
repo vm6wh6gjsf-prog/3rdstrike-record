@@ -28,7 +28,7 @@ function battles(w,l){return (w+l)+"戦"}
 
 function addRow(character){
  const r=document.createElement("div");r.className="match-row";r.dataset.w=0;r.dataset.l=0;
- r.innerHTML=`<label>相手キャラ<select class="opponent-character">${opts(state.characterOrder,character||state.characterOrder[0])}</select></label>
+ r.innerHTML=`<label>相手のキャラ<select class="opponent-character">${opts(state.characterOrder,character||state.characterOrder[0])}</select></label>
  <div class="result-controls">
    <div class="count-buttons"><button type="button" class="count-button win">WIN<span class="count-value">0</span></button><button type="button" class="count-button loss">LOSE<span class="count-value">0</span></button></div>
    <button type="button" class="clear-row" aria-label="入力した勝敗を削除" title="削除">🗑</button>
@@ -76,7 +76,7 @@ function renderHistory(){
    const pw=rows.reduce((n,r)=>n+(+r.wins||0),0),pl=rows.reduce((n,r)=>n+(+r.losses||0),0);
    return `<div class="player-group">
     <div class="player-title"><span>${esc(player)}</span></div>
-    <div class="column-labels"><span>自分のキャラ vs 相手キャラ</span><span>WIN</span><span>LOSE</span><span>勝率</span><span></span></div>
+    <div class="column-labels"><span>自分のキャラ vs 相手のキャラ</span><span>WIN</span><span>LOSE</span><span>勝率</span><span></span></div>
     ${rows.map(r=>`<div class="record-row">
       <span class="character-name">${esc(r.myCharacter)} vs ${esc(r.opponentCharacter)}</span>
       <span class="count">${r.wins}</span><span class="count">${r.losses}</span><span class="count">${rate(r.wins,r.losses)}</span>
@@ -93,7 +93,7 @@ function renderHistory(){
 function snapshot(){return JSON.parse(JSON.stringify(state.records))}
 function renderReports(){
  if(!state.reports.length){$("#reports").innerHTML="<p class='muted empty'>まだレポートがありません。</p>";return}
- $("#reports").innerHTML=state.reports.map((rep,ri)=>{
+ $("#reports").innerHTML=state.reports.map((rep,ri)=>({rep,ri})).reverse().map(({rep,ri})=>{
   const groups=groupedRecords(rep.records);
   let totalW=0,totalL=0;rep.records.forEach(r=>{totalW+=+r.wins||0;totalL+=+r.losses||0});
   const editing=rep.editing===true;
@@ -107,7 +107,7 @@ function renderReports(){
     const pw=rows.reduce((n,r)=>n+(+r.wins||0),0),pl=rows.reduce((n,r)=>n+(+r.losses||0),0);
     return `<div class="player-group">
       <div class="player-title"><span>${esc(player)}</span></div>
-      <div class="column-labels"><span>自分のキャラ vs 相手キャラ</span><span>WIN</span><span>LOSE</span><span>勝率</span><span></span></div>
+      <div class="column-labels"><span>自分のキャラ vs 相手のキャラ</span><span>WIN</span><span>LOSE</span><span>勝率</span><span></span></div>
       ${rows.map(r=>`<div class="record-row">
        <span class="character-name">${esc(r.myCharacter)} vs ${esc(r.opponentCharacter)}</span>
        <span class="count">${r.wins}</span><span class="count">${r.losses}</span><span class="count">${rate(r.wins,r.losses)}</span><span></span>
@@ -221,7 +221,7 @@ document.addEventListener("click",e=>{
  const t=e.target;
  if(t.dataset.delete!==undefined){
   const i=+t.dataset.delete;
-  if(confirm(`「${state.records[i].myCharacter} / ${state.records[i].player} / ${state.records[i].opponentCharacter}」を削除しますか？`)){state.records.splice(i,1);save();renderHistory();toast("戦績を削除しました")}
+  if(confirm(`${state.records[i].player}との${state.records[i].myCharacter}vs${state.records[i].opponentCharacter}の戦績を削除しますか？`)){state.records.splice(i,1);save();renderHistory();toast("戦績を削除しました")}
  }
  if(t.dataset.reportDelete!==undefined){
   const i=+t.dataset.reportDelete;
