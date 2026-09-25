@@ -4,19 +4,19 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#111827">
-<meta name="app-version" content="v31">
+<meta name="app-version" content="v32">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="3rd対戦記録">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" type="image/png" sizes="180x180" href="icon-180.png">
-<link rel="stylesheet" href="style.css?v=31">
+<link rel="stylesheet" href="style.css?v=32">
 <title>3rd対戦記録</title>
 </head>
 <body>
 <main>
-<header class="topbar"><h1>3rd対戦記録</h1><div class="topbar-actions"><button id="openHelp" class="help-button" type="button">使い方</button><span class="version-badge">v31</span></div></header>
+<header class="topbar"><h1>3rd対戦記録</h1><div class="topbar-actions"><button id="openHelp" class="help-button" type="button">使い方</button><span class="version-badge">v32</span></div></header>
 
 <section id="inputTab" class="tab-panel">
 <form id="battleForm">
@@ -114,9 +114,13 @@
 <p>対戦相手の名前を追加・削除できます。</p>
 <p>初期状態では「不明」が登録されています。</p>
 <p>プレイヤーを削除すると、現在の戦績にあるそのプレイヤー名は「不明」に置き換わります。保存済みの戦績レポートには影響しません。</p>
-<ul><li>三本線のマークをドラッグして、「不明」を含む登録プレイヤーの並び順を変更できます。</li></ul>
+<p>三本線のマークをドラッグして、「不明」を含む登録プレイヤーの並び順を変更できます。</p>
 <h3>キャラ設定</h3>
-<ul><li>19キャラクターの一覧を表示します。</li><li>三本線のマークをドラッグしてキャラクターの並び順を自由に変更できます。</li><li>変更した並び順は、戦績入力などのキャラクター選択欄に反映されます。</li><li>キャラクターの追加・編集・削除はできません。</li><li>「キャラ設定を初期化」で既定の並び順に戻せます。</li></ul>
+<p>19キャラクターの一覧を表示します。</p>
+<p>三本線のマークをドラッグしてキャラクターの並び順を自由に変更できます。</p>
+<p>変更した並び順は、戦績入力などのキャラクター選択欄に反映されます。</p>
+<p>キャラクターの追加・編集・削除はできません。</p>
+<p>「キャラ設定を初期化」で既定の並び順に戻せます。</p>
 <h3>データの保存</h3>
 <p>戦績、プレイヤー設定、戦績レポートはブラウザ内に保存されます。サーバーやクラウドへの同期は行いません。</p>
 <p>ブラウザのWebサイトデータを削除すると、記録したデータも消える可能性があります。</p>
@@ -127,7 +131,7 @@
 </div>
 
 <div id="toast" class="toast"></div>
-<script src="app.js?v=31"></script>
+<script src="app.js?v=32"></script>
 <script>if("serviceWorker" in navigator){navigator.serviceWorker.register("./sw.js").catch(()=>{});}</script>
 </body>
 </html>

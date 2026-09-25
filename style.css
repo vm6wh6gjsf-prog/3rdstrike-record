@@ -584,3 +584,10 @@ button {
 .player-sort-item .delete{
   flex:0 0 auto;
 }
+
+/* v32: add the same comfortable spacing between player setting rows */
+#playerList{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
