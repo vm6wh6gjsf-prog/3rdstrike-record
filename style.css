@@ -567,3 +567,20 @@ button {
 .player-sort-item.dragging{opacity:1!important;transform:scale(1.035);border:2px solid #2563eb!important;background:#fff!important;box-shadow:0 10px 24px rgba(0,0,0,.22)!important;z-index:20!important}
 .player-sort-item .setting-actions{display:flex;align-items:center;gap:4px}
 .player-drag-handle{flex:0 0 44px}
+
+/* v31: player sorting rows share the exact character-setting card style */
+.player-sort-item{
+  min-height:48px;
+  padding:7px 8px 7px 12px;
+  background:#fff;
+  border:1px solid #e5e7eb;
+  border-radius:10px;
+}
+.player-sort-item .setting-actions{
+  display:flex;
+  align-items:center;
+  gap:6px;
+}
+.player-sort-item .delete{
+  flex:0 0 auto;
+}

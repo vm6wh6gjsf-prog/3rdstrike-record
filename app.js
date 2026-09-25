@@ -124,8 +124,8 @@ function renderReports(){
 }
 function renderPlayers(){
  const box=$("#playerList");
- box.innerHTML=state.players.map((n,i)=>`<div class="setting-item player-sort-item" data-player="${esc(n)}">
-   <span>${esc(n)}</span>
+ box.innerHTML=state.players.map((n,i)=>`<div class="character-sort-item player-sort-item" data-player="${esc(n)}">
+   <span class="character-sort-name">${esc(n)}</span>
    <div class="setting-actions">
     ${n!=="不明"?`<button class="delete" data-dp="${i}">×</button>`:""}
     <button type="button" class="drag-handle player-drag-handle" aria-label="${esc(n)}を並び替え"><span></span><span></span><span></span></button>
