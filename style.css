@@ -562,3 +562,8 @@ button {
 .character-sort-item.dragging .drag-handle span{
   background:#2563eb !important;
 }
+
+/* v30: sortable players use the same held-card feedback as characters */
+.player-sort-item.dragging{opacity:1!important;transform:scale(1.035);border:2px solid #2563eb!important;background:#fff!important;box-shadow:0 10px 24px rgba(0,0,0,.22)!important;z-index:20!important}
+.player-sort-item .setting-actions{display:flex;align-items:center;gap:4px}
+.player-drag-handle{flex:0 0 44px}

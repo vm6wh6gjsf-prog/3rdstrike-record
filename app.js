@@ -123,7 +123,31 @@ function renderReports(){
  }).join("");
 }
 function renderPlayers(){
- $("#playerList").innerHTML=state.players.map((n,i)=>`<div class="setting-item"><span>${esc(n)}</span><div class="setting-actions">${i?`<button class="delete" data-dp="${i}">×</button>`:""}</div></div>`).join("");
+ const box=$("#playerList");
+ box.innerHTML=state.players.map((n,i)=>`<div class="setting-item player-sort-item" data-player="${esc(n)}">
+   <span>${esc(n)}</span>
+   <div class="setting-actions">
+    ${n!=="不明"?`<button class="delete" data-dp="${i}">×</button>`:""}
+    <button type="button" class="drag-handle player-drag-handle" aria-label="${esc(n)}を並び替え"><span></span><span></span><span></span></button>
+   </div>
+ </div>`).join("");
+ box.querySelectorAll(".player-drag-handle").forEach(h=>h.addEventListener("pointerdown",startPlayerDrag));
+}
+function startPlayerDrag(e){
+ e.preventDefault();
+ const handle=e.currentTarget,item=handle.closest(".player-sort-item"),box=$("#playerList");
+ item.classList.add("dragging");
+ const move=ev=>{
+  ev.preventDefault();const y=ev.clientY;
+  const others=[...box.querySelectorAll(".player-sort-item:not(.dragging)")];
+  const before=others.find(el=>{const r=el.getBoundingClientRect();return y<r.top+r.height/2});
+  if(before)box.insertBefore(item,before);else box.appendChild(item);
+ };
+ const finish=()=>{
+  document.removeEventListener("pointermove",move);document.removeEventListener("pointerup",finish);document.removeEventListener("pointercancel",finish);
+  item.classList.remove("dragging");state.players=[...box.querySelectorAll(".player-sort-item")].map(el=>el.dataset.player);save();renderPlayers();renderSelects();
+ };
+ document.addEventListener("pointermove",move,{passive:false});document.addEventListener("pointerup",finish,{once:true});document.addEventListener("pointercancel",finish,{once:true});
 }
 function renderCharacters(){
  const box=$("#characterList");if(!box)return;
@@ -222,6 +246,10 @@ $("#deleteRecords").onclick=()=>{
 };
 $("#resetPlayers").onclick=()=>{
  if(confirm("プレイヤー設定を初期化しますか？")){state.records.forEach(r=>r.player="不明");state.players=["不明"];save();render();toast("初期化しました")}
+};
+
+$("#resetCharacters").onclick=()=>{
+ if(confirm("キャラ設定を初期化しますか？")){state.characterOrder=[...INITIAL];save();renderCharacters();renderSelects();toast("キャラ設定を初期化しました")}
 };
 
 document.querySelectorAll(".nav-item").forEach(b=>b.onclick=()=>{
