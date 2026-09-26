@@ -65,7 +65,14 @@ function normalize(){
 normalize();
 
 function groupedRecords(records){
- const groups={};records.forEach((r,i)=>(groups[r.player]??=[]).push({...r,index:i}));return groups;
+ const groups={};records.forEach((r,i)=>(groups[r.player]??=[]).push({...r,index:i}));
+ const order=new Map(state.characterOrder.map((c,i)=>[c,i]));
+ const pos=c=>order.has(c)?order.get(c):Number.MAX_SAFE_INTEGER;
+ Object.values(groups).forEach(rows=>rows.sort((a,b)=>
+   pos(a.myCharacter)-pos(b.myCharacter) ||
+   pos(a.opponentCharacter)-pos(b.opponentCharacter)
+ ));
+ return groups;
 }
 function renderHistory(){
  let wins=0,losses=0;state.records.forEach(r=>{wins+=+r.wins||0;losses+=+r.losses||0});
